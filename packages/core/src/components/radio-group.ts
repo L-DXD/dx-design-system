@@ -2,7 +2,6 @@ import SlRadioGroup from '@shoelace-style/shoelace/dist/components/radio-group/r
 import { remapEvents } from '../utils/remap-events.js';
 
 export class DsRadioGroup extends SlRadioGroup {
-  createRenderRoot() { return this; }
   connectedCallback() {
     super.connectedCallback();
     remapEvents(this, { 'sl-change': 'ds-change' });
