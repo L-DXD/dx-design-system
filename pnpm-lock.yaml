@@ -31,6 +31,31 @@ importers:
         specifier: ^8
         version: 8.0.8(jiti@2.6.1)(yaml@2.8.3)
 
+  packages/react:
+    dependencies:
+      '@dx/core':
+        specifier: workspace:*
+        version: link:../core
+      '@dx/styles':
+        specifier: workspace:*
+        version: link:../styles
+      '@lit/react':
+        specifier: ^1
+        version: 1.0.8(@types/react@19.2.14)
+    devDependencies:
+      '@types/react':
+        specifier: ^19
+        version: 19.2.14
+      react:
+        specifier: ^19
+        version: 19.2.5
+      typescript:
+        specifier: ^6
+        version: 6.0.2
+      vite:
+        specifier: ^8
+        version: 8.0.8(jiti@2.6.1)(yaml@2.8.3)
+
   packages/storybook: {}
 
   packages/styles:
@@ -615,6 +640,10 @@ packages:
 
   qr-creator@1.0.0:
     resolution: {integrity: sha512-C0cqfbS1P5hfqN4NhsYsUXePlk9BO+a45bAQ3xLYjBL3bOIFzoVEjs79Fado9u9BPBD3buHi3+vY+C8tHh4qMQ==}
+
+  react@19.2.5:
+    resolution: {integrity: sha512-llUJLzz1zTUBrskt2pwZgLq59AemifIftw4aB7JxOqf1HY2FDaGDxgwpAPVzHU1kdWabH7FauP4i1oEeer2WCA==}
+    engines: {node: '>=0.10.0'}
 
   read-cache@1.0.0:
     resolution: {integrity: sha512-Owdv/Ft7IjOgm/i0xvNDZ1LrRANRfew4b2prF3OWMQLxLfu3bS8FVhCsrSCMK4lR56Y9ya+AThoTpDCTxCmpRA==}
@@ -1215,6 +1244,8 @@ snapshots:
   pretty-hrtime@1.0.3: {}
 
   qr-creator@1.0.0: {}
+
+  react@19.2.5: {}
 
   read-cache@1.0.0:
     dependencies:

@@ -1,0 +1,34 @@
+{
+  "name": "@dx/react",
+  "version": "0.1.0",
+  "description": "DX Design System — React wrappers for @dx/core Web Components",
+  "type": "module",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": ["dist"],
+  "scripts": {
+    "build": "vite build",
+    "dev": "vite build --watch"
+  },
+  "dependencies": {
+    "@lit/react": "^1",
+    "@dx/core": "workspace:*"
+  },
+  "peerDependencies": {
+    "react": "^18 || ^19",
+    "@dx/styles": "workspace:*"
+  },
+  "devDependencies": {
+    "react": "^19",
+    "@types/react": "^19",
+    "typescript": "^6",
+    "vite": "^8"
+  }
+}
