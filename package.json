@@ -1,9 +1,15 @@
 {
-  "name": "my-design-system",
+  "name": "dx-design-system",
   "private": true,
+  "packageManager": "pnpm@10.12.2",
   "scripts": {
     "dev": "turbo run dev",
     "build": "turbo run build",
+    "lint": "turbo run lint",
+    "test": "turbo run test",
     "storybook": "pnpm --filter storybook run storybook"
+  },
+  "devDependencies": {
+    "turbo": "^2.9.6"
   }
 }
