@@ -41,102 +41,115 @@ Shoelace(Lit Web Components) 기반 멀티 플랫폼 디자인 시스템. React/
 
 ---
 
-## 핵심 설계 원칙
+## 핵심 규칙 (절대 어기지 말 것)
 
-### 1. Compound Component Pattern (복합 컴포넌트 패턴)
+배경·예시·"왜 그렇게 결정했는가" 는 [`docs/architecture.md`](./docs/architecture.md) 참고. 여기서는 지켜야 할 **규칙만** 열거한다.
 
-**모든 폼 컴포넌트는 Compound 패턴을 따른다.** `label`, `helperText`, `error` 같은 부속 요소를 **prop으로 전달하지 않는다**. 대신 별도 컴포넌트로 분리하여 소비자가 조립(compose)한다.
+1. **Compound 패턴 준수** — 폼 컴포넌트에 `label` / `helperText` / `error` prop을 추가하지 않는다. 별도 컴포넌트(`<ds-label>`, `<ds-helper-text>`, `<ds-error-message>`)로 분리해서 `<ds-form-field>` 안에 조립한다. → [아키텍처 §1](./docs/architecture.md#1-compound-component-pattern)
 
-#### ❌ 나쁜 예 (prop 기반)
+2. **스타일 props 최소화** — `variant`/`color`/`size` 같은 스타일 prop은 추가하지 않는다. 의미적 variant(`primary`/`destructive`/`success`)만 허용. 구체 색상은 CSS Variables 로 제어. → [아키텍처 §2](./docs/architecture.md#2-headless-ui-철학)
 
-```tsx
-<Input label="이메일" helperText="회사 이메일을 입력하세요" error={errors.email} />
-<Toggle label="알림 받기" />
-```
+3. **Shoelace 내장 label/help-text/error attribute 사용 금지** — `sl-input` 의 `label` prop 등은 쓰지 않는다. `ds-*` 는 핵심 동작만 상속하고 보조 컴포넌트는 직접 구현한다. → [아키텍처 §3](./docs/architecture.md#3-shoelace-래핑-원칙)
 
-#### ✅ 좋은 예 (Compound 패턴)
+4. **이벤트는 `ds-*` 접두사** — Shoelace 컴포넌트를 래핑할 때 `connectedCallback` 에서 `remapEvents({ 'sl-X': 'ds-X' })` 로 재디스패치. 소비자·React 래퍼·스토리 모두 `ds-*` 만 구독. → [아키텍처 §4](./docs/architecture.md#4-이벤트-접두사-ds-)
 
-```tsx
-<FormField>
-  <Label htmlFor="email">이메일</Label>
-  <Input id="email" type="email" />
-  <HelperText>회사 이메일을 입력하세요</HelperText>
-  <ErrorMessage>{errors.email}</ErrorMessage>
-</FormField>
+5. **컴포넌트는 semantic 토큰만 사용** — `--dx-color-primary` 같은 semantic 토큰만 참조하고 primitive 팔레트(`--dx-palette-*`)를 직접 쓰지 않는다. 이렇게 해야 다크모드·테마 오버라이드가 자동 적용된다. → [아키텍처 §6](./docs/architecture.md#6-css-variables-기반-테마)
 
-<FormField orientation="horizontal">
-  <Toggle id="notify" />
-  <Label htmlFor="notify">알림 받기</Label>
-</FormField>
-```
+6. **Shadow DOM 기본값 유지** — `createRenderRoot` 를 오버라이드하지 않는다 (Shoelace 내부 스타일 보존). 유일한 예외는 `icon.ts` (Light DOM 렌더가 의도된 경우).
 
-**왜 이렇게 해야 하는가:**
-- **유연한 조립**: Label을 위/아래/좌/우 어디든 배치 가능. 여러 Label, 여러 HelperText도 가능.
-- **스타일 자유도**: 각 조각의 스타일을 소비자가 완전히 제어.
-- **접근성 명시**: `htmlFor`/`id`로 연결 관계가 명확. ARIA 속성도 개별 제어.
-- **shadcn/Radix UI 멘탈 모델**: React 개발자에게 익숙한 패턴.
-
-### 2. Headless UI 철학
-
-컴포넌트는 **동작(behavior)**과 **스타일(style)**을 분리한다.
-
-- **동작 레이어** (`@dx/core`): 접근성, 키보드 네비게이션, 상태 관리. 최소한의 기본 스타일만 포함 (Shoelace 상속).
-- **스타일 레이어**: CSS Variables 오버라이드, `::part()` CSS, 외부 Tailwind 클래스로 제어.
-
-**구체적인 규칙:**
-- 컴포넌트 API에 `variant`, `color`, `size` 같은 스타일 props는 최소화
-- 필요 시 **의미적 variant**(`primary`, `destructive`, `success`)만 제공하고, 구체적 색상은 CSS Variables로
-- 레이아웃은 **소비자의 책임** (`FormField`, `Stack`, 플레이너 div 등으로 조립)
-
-### 3. Shoelace 래핑 원칙
-
-Shoelace는 "batteries included"(label/help-text 내장) 철학이라 Compound 패턴과 충돌한다. 원칙:
-
-- **인터랙티브 핵심 로직만 상속**: `ds-input`은 Shoelace의 `sl-input`을 상속하되, 내장 `label` 슬롯은 **사용하지 않는다**.
-- **Compound 보조 컴포넌트는 직접 구현**: `Label`, `FormField`, `HelperText`, `ErrorMessage` 등은 Shoelace에 의존하지 않는 별도 Web Component / React 컴포넌트로 작성.
-- **Shoelace 내장 label/help-text/error attribute는 사용 금지**: prop 기반 label은 이 DS의 철학에 어긋남.
-
-### 4. 이벤트 접두사 `ds-`
-
-Shoelace의 `sl-*` 이벤트는 `remapEvents` 유틸로 `ds-*`로 재디스패치한다. 소비자는 항상 `ds-*` 이벤트만 구독.
-
-### 5. 다크모드 (Dark Mode)
-
-CSS Variables 기반 다크모드 지원. **3가지 활성화 방식:**
-
-1. **명시적 클래스** (권장, Tailwind 호환): `<html class="dark">` 또는 하위 스코프에 `.dark` 클래스.
-2. **data attribute**: `<html data-theme="dark">` — Thymeleaf 친화적.
-3. **OS 자동 감지**: `.light` / `.dark` / `data-theme` 없으면 `prefers-color-scheme` 따름.
-
-**원칙:**
-- Primitive 팔레트(`--dx-palette-*`)는 고정. 라이트/다크 공통.
-- Semantic 토큰(`--dx-color-*`)만 다크모드에서 재정의.
-- Shoelace의 `--sl-color-neutral-*` 스케일도 함께 반전 (0 ↔ 950).
-- 컴포넌트는 항상 semantic 토큰만 사용해야 자동으로 다크모드 대응됨.
-
-**예시:**
-```html
-<!-- Thymeleaf -->
-<html th:attr="data-theme=${userTheme}">
-  <body>
-    <ds-button variant="primary">저장</ds-button>
-  </body>
-</html>
-
-<!-- React/Next.js -->
-<html className={theme === 'dark' ? 'dark' : 'light'}>
-```
+7. **접근성 이름 연결** — 외부 `<ds-label html-for>` 를 쓸 때 Shadow DOM 내부 컨트롤에도 이름이 연결되도록 `syncAccessibleName` 유틸을 `firstUpdated` 에서 호출한다 (`input`, `checkbox`, `toggle`, `select` 참고). 새 폼 컴포넌트 추가 시 동일 패턴 적용.
 
 ---
 
 ## 컴포넌트 추가 시 체크리스트
 
-1. **API 설계**: Compound 패턴으로 분해 가능한가? label/helperText가 props에 섞여있지 않은가?
-2. **Shoelace 상속**: 핵심 동작은 Shoelace 상속. 부속 요소는 별도 컴포넌트.
-3. **이벤트**: `sl-*` → `ds-*` 재매핑 `connectedCallback`에 추가.
-4. **React 래퍼**: `@lit/react` `createComponent`, 이벤트는 `ds-*` 이름으로 노출.
-5. **Storybook 스토리**: 4탭 코드 뷰(HTML/CSS/WC/Thymeleaf/React) + 다양한 조립 예시.
-6. **Shadow DOM**: 기본값(유지). `createRenderRoot`를 오버라이드하지 않는다.
+위 "핵심 규칙" 외에 새 컴포넌트를 만들 때 추가로 확인할 것:
+
+- **React 래퍼**: `@lit/react` `createComponent` 로 생성하고 `events` 매핑에 `ds-*` 이름만 노출.
+- **Storybook 스토리**: 4탭 코드 뷰(HTML/CSS · WC · Thymeleaf · React) 필수. 상태별 variation 최소 3개.
+- **a11y**: 스토리의 Accessibility 패널 violations 0개 유지 (컴포넌트 레벨에서 수정, 스토리에서 우회 금지).
+
+상세 절차는 아래 "작업 워크플로우" 참고.
+
+---
+
+## 작업 워크플로우
+
+컴포넌트·토큰·스타일 등 **공개 API나 사용법에 영향을 주는 변경** 은 아래 순서를 빠짐없이 수행한다. 생략하면 Storybook · 소비자 문서 · 내부 지침이 금방 서로 어긋난다.
+
+### 1. 구현
+
+- `@dx/core` 에 Web Component 추가/수정 → 필요 시 `@dx/react` 래퍼 동기화.
+- 토큰/스타일 변경은 `@dx/styles/src/tokens.css` 또는 관련 CSS에 반영.
+- **공개 API(이벤트, slot, part, attribute, CSS 변수)를 바꾼 경우** 영향 범위를 주석으로 기록.
+
+### 2. Storybook 스토리 작성·갱신
+
+새 컴포넌트는 반드시 스토리를 추가하고, 기존 컴포넌트의 API가 바뀌었다면 스토리도 업데이트한다.
+
+- 위치: `packages/storybook/stories/<atomic-level>/<name>.stories.ts` (예: `atoms/`, `molecules/`)
+- 4탭 코드 스니펫 필수: `html` / `wc` / `thymeleaf` / `react`
+- 상태별 variation 최소 3개: 기본, disabled/error 등 경계 상태, 조립(compose) 예시
+- `autodocs` 태그 포함, `docs.description.component` 에 한글 설명 기재
+- a11y 점검은 빌드 직후 별도 단계로 수행 (아래 4단계).
+
+### 3. 빌드·검증
+
+변경한 패키지와 그 하위 의존 패키지를 순서대로 빌드한다.
+
+```bash
+pnpm --filter @dx/styles build
+pnpm --filter @dx/core build
+pnpm --filter @dx/react build
+```
+
+의존 관계: `@dx/styles → @dx/core → @dx/react → storybook`. 상위를 바꿨다면 하위도 반드시 다시 빌드한다. Storybook dev 서버는 HMR 로 `@dx/core` 변경을 반영하지만, `@dx/styles` 는 PostCSS 빌드가 필요하므로 수동 재빌드해야 한다.
+
+CI 가 있는 경우 테스트/타입체크/lint 가 모두 통과해야 한다.
+
+### 4. 접근성(a11y) 점검 — 생략 금지
+
+Storybook 의 **Accessibility 패널** 에서 axe-core violations 를 확인한다. 영향을 받은 스토리 전부에서 violations 0개가 기준이다.
+
+- **점검 대상**: 새/수정된 컴포넌트 스토리 + 해당 컴포넌트를 포함하는 molecules/organisms 스토리. Foundation 변경(색상 토큰 등)이면 `foundation-*` 스토리와 Badge/Button 같이 해당 토큰을 쓰는 atoms 도 함께 점검.
+- **자동 스캔 (권장)**: Playwright MCP 로 Storybook iframe을 순회하며 `axe.run()` 실행. 결과에서 Storybook chrome 관련 rule(`landmark-one-main`, `page-has-heading-one`, `region`, `frame-title`, `meta-viewport`)은 무시하고, 나머지 실제 violations 가 0 인지 확인한다.
+- **위반이 나올 때**:
+  - `color-contrast` → `@dx/styles` 의 토큰·override 에서 대비를 올린다 (badge 선례: 600 → 700 shade).
+  - `label` / `label-title-only` → 컴포넌트의 `firstUpdated` 에서 `syncAccessibleName` 을 호출해 Shadow DOM 내부 컨트롤에 이름을 연결한다.
+  - `heading-order` → 스토리의 heading 레벨을 h1→h2→h3 순서로 맞춘다.
+  - **스토리 쪽에서 규칙을 disable 시켜 우회하지 않는다.** 원인을 컴포넌트/스타일 레이어에서 해결한다.
+- 접근성 수정이 끝나면 변경된 패키지를 다시 빌드하고 axe 스캔을 반복해 0 violations 를 확인한다.
+
+### 5. 문서 동기화 (자동 수행)
+
+변경의 성격에 따라 **관련 문서를 같은 커밋에서** 함께 업데이트한다. 문서는 다음 네 갈래로 관리된다:
+
+| 변경 유형 | 업데이트해야 하는 문서 |
+|----------|---------------------|
+| 소비자가 쓰는 사용법/컴포넌트 API/테마 변수 | `README.md` (서비스 사용자 기준) |
+| 아키텍처·구조적 결정 | `docs/architecture.md` |
+| 패키지 구조·워크플로우·컴포넌트 추가 방법 | `docs/contributing.md` |
+| Claude 작업 지침 (본 문서의 원칙에 영향) | `CLAUDE.md` |
+| 초기 설계·구현 로드맵 기록 | `docs/superpowers/specs/` · `docs/superpowers/plans/` |
+
+**원칙:**
+
+- 새 `ds-*` 컴포넌트가 소비자에게 노출된다면 `README.md` 의 해당 환경(React/Thymeleaf/HTML) 예시에 추가.
+- 아키텍처 결정(Compound 패턴, Shoelace 래핑 방식 등)을 바꾸었거나 새 패턴을 도입했다면 `docs/architecture.md` + `CLAUDE.md` 둘 다 갱신.
+- 개발 프로세스/패키지 구조/빌드 방식이 바뀌면 `docs/contributing.md` 갱신.
+- 문서 내 예시 코드 블록도 최신 API 와 일치해야 한다. 이전 예시가 더 이상 동작하지 않으면 그대로 두지 말고 수정한다.
+
+### 6. 커밋
+
+변경·스토리·문서 업데이트를 **하나의 커밋** 에 묶는다. 분리하면 "코드만 있고 문서 없는 리비전" 이 중간에 끼어 탐색이 어려워진다. 예:
+
+```
+feat(core): ds-avatar 컴포넌트 추가
+  - @dx/core: DsAvatar 래핑 및 export
+  - @dx/react: Avatar createComponent 래퍼
+  - storybook: atoms/avatar.stories.ts (기본/사이즈/이미지 variation)
+  - README / docs/contributing: 예시 목록 갱신
+```
 
 ---
 
