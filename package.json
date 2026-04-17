@@ -1,0 +1,9 @@
+{
+  "name": "my-design-system",
+  "private": true,
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "storybook": "pnpm --filter storybook run storybook"
+  }
+}
