@@ -67,9 +67,9 @@ export const PrimitivePalettes: Story = {
       ${PALETTES.map(
         (palette) => html`
           <section>
-            <h3 style="margin: 0 0 12px 0; font-size: 16px; font-weight: 600;">
+            <h2 style="margin: 0 0 12px 0; font-size: 16px; font-weight: 600;">
               ${palette.label}
-            </h3>
+            </h2>
             <div style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px;">
               ${SHADES.filter((s) => palette.name !== 'neutral' ? s !== 0 : true).map(
                 (shade) => {
@@ -139,8 +139,11 @@ type TokenInfo = {
 };
 
 const tokenCard = (info: TokenInfo, isBg = true) => {
-  const bg = isBg ? `var(${info.token})` : 'var(--dx-color-background)';
-  const fg = isBg ? 'var(--dx-color-foreground)' : `var(${info.token})`;
+  // `example` 텍스트가 지정된 토큰은 전경(foreground) 용도이므로 배경 위에 올려 렌더한다.
+  // 이렇게 하면 *-foreground 계열이 자기 자신을 배경으로 깔아 대비가 깨지는 문제를 피한다.
+  const treatAsBg = isBg && !info.example;
+  const bg = treatAsBg ? `var(${info.token})` : 'var(--dx-color-background)';
+  const fg = treatAsBg ? 'var(--dx-color-foreground)' : `var(${info.token})`;
   const border = `1px solid var(--dx-color-border)`;
 
   return html`
@@ -169,7 +172,7 @@ const tokenCard = (info: TokenInfo, isBg = true) => {
           color: ${fg};
         "
       >
-        ${info.example ?? 'Aa'}
+        ${info.example ?? ''}
       </div>
       <div style="display: flex; flex-direction: column; gap: 6px;">
         <div style="font-weight: 600; font-size: 14px;">${info.name}</div>
@@ -187,9 +190,9 @@ const tokenCard = (info: TokenInfo, isBg = true) => {
 
 const guideSection = (title: string, tokens: TokenInfo[], isBg = true) => html`
   <section style="margin-bottom: 40px;">
-    <h3 style="font-size: 18px; font-weight: 700; margin: 0 0 16px 0; padding-bottom: 8px; border-bottom: 2px solid var(--dx-color-border);">
+    <h2 style="font-size: 18px; font-weight: 700; margin: 0 0 16px 0; padding-bottom: 8px; border-bottom: 2px solid var(--dx-color-border);">
       ${title}
-    </h3>
+    </h2>
     <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 12px;">
       ${tokens.map((t) => tokenCard(t, isBg))}
     </div>
@@ -384,7 +387,7 @@ export const ThemeOverride: Story = {
   render: () => html`
     <div style="max-width: 900px; display: flex; flex-direction: column; gap: 24px;">
       <section>
-        <h3 style="margin: 0 0 12px 0; font-size: 16px; font-weight: 600;">방법 1: Tailwind 팔레트 사용 (권장)</h3>
+        <h2 style="margin: 0 0 12px 0; font-size: 16px; font-weight: 600;">방법 1: Tailwind 팔레트 사용 (권장)</h2>
         <p style="font-size: 13px; color: var(--dx-color-muted-foreground); margin: 0 0 12px 0; line-height: 1.6;">
           서비스에서 Tailwind CSS를 import하면 Tailwind의 22개 컬러 팔레트
           (<code>--color-indigo-600</code>, <code>--color-rose-500</code> 등)를
@@ -400,7 +403,7 @@ export const ThemeOverride: Story = {
       </section>
 
       <section>
-        <h3 style="margin: 0 0 12px 0; font-size: 16px; font-weight: 600;">방법 2: OKLCH 값 직접 지정</h3>
+        <h2 style="margin: 0 0 12px 0; font-size: 16px; font-weight: 600;">방법 2: OKLCH 값 직접 지정</h2>
         <p style="font-size: 13px; color: var(--dx-color-muted-foreground); margin: 0 0 12px 0; line-height: 1.6;">
           특정 브랜드 컬러(#RRGGBB 또는 oklch 값)가 있다면 직접 지정.
         </p>
@@ -412,7 +415,7 @@ export const ThemeOverride: Story = {
       </section>
 
       <section>
-        <h3 style="margin: 0 0 12px 0; font-size: 16px; font-weight: 600;">방법 3: DS primitive 팔레트 사용</h3>
+        <h2 style="margin: 0 0 12px 0; font-size: 16px; font-weight: 600;">방법 3: DS primitive 팔레트 사용</h2>
         <p style="font-size: 13px; color: var(--dx-color-muted-foreground); margin: 0 0 12px 0; line-height: 1.6;">
           DS가 기본 제공하는 5개 팔레트(neutral/primary/success/warning/danger) 안에서 다른 shade를 선택.
         </p>

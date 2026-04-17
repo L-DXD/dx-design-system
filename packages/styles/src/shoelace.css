@@ -1,4 +1,17 @@
-/* Shoelace 컴포넌트의 Shadow DOM을 비활성화했으므로,
-   내부 스타일이 전역으로 노출되어야 한다.
-   Shoelace의 themes/light.css를 import하여 기본 변수를 제공한다. */
+/* Shoelace 기본 테마 변수를 그대로 가져온다. */
 @import '@shoelace-style/shoelace/dist/themes/light.css';
+
+/*
+ * ds-badge 색상 대비 보정.
+ * Why: Shoelace badge 기본값은 600 tone에 흰색 텍스트라 primary/success/warning 조합이
+ *      WCAG AA (소형·굵은 글씨 4.5:1)에 미달. 700 tone으로 한 단계 어둡게 재지정.
+ */
+ds-badge[variant='primary']::part(base) {
+  background-color: var(--dx-palette-primary-700);
+}
+ds-badge[variant='success']::part(base) {
+  background-color: var(--dx-palette-success-700);
+}
+ds-badge[variant='warning']::part(base) {
+  background-color: var(--dx-palette-warning-700);
+}
