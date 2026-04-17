@@ -130,3 +130,43 @@
   --sl-shadow-large: var(--dx-shadow-lg);
   --sl-shadow-x-large: var(--dx-shadow-xl);
 }
+
+/**
+ * DARK MODE — Shoelace neutral 스케일을 반전한다.
+ * Shoelace 컴포넌트들은 `sl-color-neutral-*`을 surface/text/border에 쓰기 때문에
+ * 다크모드에서 0(밝음) ↔ 950(어두움)을 뒤집어야 자연스럽다.
+ */
+.dark,
+:root[data-theme='dark'] {
+  --sl-color-neutral-0: var(--dx-palette-neutral-950);
+  --sl-color-neutral-50: var(--dx-palette-neutral-900);
+  --sl-color-neutral-100: var(--dx-palette-neutral-800);
+  --sl-color-neutral-200: var(--dx-palette-neutral-700);
+  --sl-color-neutral-300: var(--dx-palette-neutral-600);
+  --sl-color-neutral-400: var(--dx-palette-neutral-500);
+  --sl-color-neutral-500: var(--dx-palette-neutral-400);
+  --sl-color-neutral-600: var(--dx-palette-neutral-300);
+  --sl-color-neutral-700: var(--dx-palette-neutral-200);
+  --sl-color-neutral-800: var(--dx-palette-neutral-100);
+  --sl-color-neutral-900: var(--dx-palette-neutral-50);
+  --sl-color-neutral-950: var(--dx-palette-neutral-0);
+  --sl-color-neutral-1000: var(--dx-palette-neutral-0);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not(.light):not([data-theme='light']) {
+    --sl-color-neutral-0: var(--dx-palette-neutral-950);
+    --sl-color-neutral-50: var(--dx-palette-neutral-900);
+    --sl-color-neutral-100: var(--dx-palette-neutral-800);
+    --sl-color-neutral-200: var(--dx-palette-neutral-700);
+    --sl-color-neutral-300: var(--dx-palette-neutral-600);
+    --sl-color-neutral-400: var(--dx-palette-neutral-500);
+    --sl-color-neutral-500: var(--dx-palette-neutral-400);
+    --sl-color-neutral-600: var(--dx-palette-neutral-300);
+    --sl-color-neutral-700: var(--dx-palette-neutral-200);
+    --sl-color-neutral-800: var(--dx-palette-neutral-100);
+    --sl-color-neutral-900: var(--dx-palette-neutral-50);
+    --sl-color-neutral-950: var(--dx-palette-neutral-0);
+    --sl-color-neutral-1000: var(--dx-palette-neutral-0);
+  }
+}

@@ -100,6 +100,33 @@ Shoelace는 "batteries included"(label/help-text 내장) 철학이라 Compound �
 
 Shoelace의 `sl-*` 이벤트는 `remapEvents` 유틸로 `ds-*`로 재디스패치한다. 소비자는 항상 `ds-*` 이벤트만 구독.
 
+### 5. 다크모드 (Dark Mode)
+
+CSS Variables 기반 다크모드 지원. **3가지 활성화 방식:**
+
+1. **명시적 클래스** (권장, Tailwind 호환): `<html class="dark">` 또는 하위 스코프에 `.dark` 클래스.
+2. **data attribute**: `<html data-theme="dark">` — Thymeleaf 친화적.
+3. **OS 자동 감지**: `.light` / `.dark` / `data-theme` 없으면 `prefers-color-scheme` 따름.
+
+**원칙:**
+- Primitive 팔레트(`--dx-palette-*`)는 고정. 라이트/다크 공통.
+- Semantic 토큰(`--dx-color-*`)만 다크모드에서 재정의.
+- Shoelace의 `--sl-color-neutral-*` 스케일도 함께 반전 (0 ↔ 950).
+- 컴포넌트는 항상 semantic 토큰만 사용해야 자동으로 다크모드 대응됨.
+
+**예시:**
+```html
+<!-- Thymeleaf -->
+<html th:attr="data-theme=${userTheme}">
+  <body>
+    <ds-button variant="primary">저장</ds-button>
+  </body>
+</html>
+
+<!-- React/Next.js -->
+<html className={theme === 'dark' ? 'dark' : 'light'}>
+```
+
 ---
 
 ## 컴포넌트 추가 시 체크리스트

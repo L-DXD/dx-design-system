@@ -130,6 +130,97 @@
   --dx-color-destructive-hover: var(--dx-color-danger-hover);
 
   /* ============================================================
+   *  2-1. DARK MODE SEMANTIC OVERRIDES
+   *  `.dark` 클래스가 적용된 스코프에서 semantic 토큰을 반전.
+   *  primitive 팔레트(50~950)는 고정. semantic alias만 바뀐다.
+   * ============================================================ */
+}
+
+.dark,
+:root[data-theme='dark'] {
+  /* Primary — 어두운 배경에서는 약간 밝은 톤 사용 */
+  --dx-color-primary: var(--dx-palette-primary-500);
+  --dx-color-primary-hover: var(--dx-palette-primary-400);
+  --dx-color-primary-foreground: var(--dx-palette-neutral-950);
+  --dx-color-primary-subtle: var(--dx-palette-primary-900);
+
+  /* Secondary */
+  --dx-color-secondary: var(--dx-palette-neutral-400);
+  --dx-color-secondary-hover: var(--dx-palette-neutral-300);
+  --dx-color-secondary-foreground: var(--dx-palette-neutral-950);
+
+  /* Status */
+  --dx-color-success: var(--dx-palette-success-500);
+  --dx-color-success-foreground: var(--dx-palette-neutral-950);
+  --dx-color-success-subtle: var(--dx-palette-success-900);
+
+  --dx-color-warning: var(--dx-palette-warning-500);
+  --dx-color-warning-foreground: var(--dx-palette-neutral-950);
+  --dx-color-warning-subtle: var(--dx-palette-warning-900);
+
+  --dx-color-danger: var(--dx-palette-danger-500);
+  --dx-color-danger-hover: var(--dx-palette-danger-400);
+  --dx-color-danger-foreground: var(--dx-palette-neutral-950);
+  --dx-color-danger-subtle: var(--dx-palette-danger-900);
+
+  /* Surface */
+  --dx-color-background: var(--dx-palette-neutral-950);
+  --dx-color-foreground: var(--dx-palette-neutral-50);
+  --dx-color-surface: var(--dx-palette-neutral-900);
+  --dx-color-surface-foreground: var(--dx-palette-neutral-50);
+
+  /* Muted */
+  --dx-color-muted: var(--dx-palette-neutral-800);
+  --dx-color-muted-foreground: var(--dx-palette-neutral-400);
+
+  /* Border / Input / Ring */
+  --dx-color-border: var(--dx-palette-neutral-800);
+  --dx-color-input: var(--dx-palette-neutral-800);
+  --dx-color-ring: var(--dx-palette-primary-400);
+}
+
+/* OS 다크모드 자동 감지 (`.light` 명시가 없을 때만) */
+@media (prefers-color-scheme: dark) {
+  :root:not(.light):not([data-theme='light']) {
+    --dx-color-primary: var(--dx-palette-primary-500);
+    --dx-color-primary-hover: var(--dx-palette-primary-400);
+    --dx-color-primary-foreground: var(--dx-palette-neutral-950);
+    --dx-color-primary-subtle: var(--dx-palette-primary-900);
+
+    --dx-color-secondary: var(--dx-palette-neutral-400);
+    --dx-color-secondary-hover: var(--dx-palette-neutral-300);
+    --dx-color-secondary-foreground: var(--dx-palette-neutral-950);
+
+    --dx-color-success: var(--dx-palette-success-500);
+    --dx-color-success-foreground: var(--dx-palette-neutral-950);
+    --dx-color-success-subtle: var(--dx-palette-success-900);
+
+    --dx-color-warning: var(--dx-palette-warning-500);
+    --dx-color-warning-foreground: var(--dx-palette-neutral-950);
+    --dx-color-warning-subtle: var(--dx-palette-warning-900);
+
+    --dx-color-danger: var(--dx-palette-danger-500);
+    --dx-color-danger-hover: var(--dx-palette-danger-400);
+    --dx-color-danger-foreground: var(--dx-palette-neutral-950);
+    --dx-color-danger-subtle: var(--dx-palette-danger-900);
+
+    --dx-color-background: var(--dx-palette-neutral-950);
+    --dx-color-foreground: var(--dx-palette-neutral-50);
+    --dx-color-surface: var(--dx-palette-neutral-900);
+    --dx-color-surface-foreground: var(--dx-palette-neutral-50);
+
+    --dx-color-muted: var(--dx-palette-neutral-800);
+    --dx-color-muted-foreground: var(--dx-palette-neutral-400);
+
+    --dx-color-border: var(--dx-palette-neutral-800);
+    --dx-color-input: var(--dx-palette-neutral-800);
+    --dx-color-ring: var(--dx-palette-primary-400);
+  }
+}
+
+:root {
+
+  /* ============================================================
    *  3. TYPOGRAPHY
    * ============================================================ */
 
