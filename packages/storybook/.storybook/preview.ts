@@ -2,7 +2,43 @@ import '@dx/styles';
 import '@dx/core';
 
 import type { Preview } from '@storybook/web-components';
-import { CustomDocsPage } from './CustomDocsPage';
+
+type CodeTabs = {
+  html?: string;
+  wc?: string;
+  thymeleaf?: string;
+  react?: string;
+};
+
+/**
+ * Docs 'Show code' 에 4가지 환경의 코드를 한 번에 표시.
+ * Storybook 의 Canvas 내부 Source 를 완전히 4탭 UI로 교체하는 안정적인
+ * 공식 API가 없어서, 하나의 코드 블록에 섹션 구분자로 4개 스니펫을 출력한다.
+ * (진짜 탭 UI는 하단 패널의 Code addon 에서 볼 수 있다.)
+ */
+const formatCodeTabs = (tabs: CodeTabs): string => {
+  const sections: string[] = [];
+  if (tabs.wc) {
+    sections.push('<!-- ══════════ Web Component ══════════ -->');
+    sections.push(tabs.wc.trim());
+  }
+  if (tabs.react) {
+    sections.push('');
+    sections.push('<!-- ══════════ React ══════════ -->');
+    sections.push(tabs.react.trim());
+  }
+  if (tabs.thymeleaf) {
+    sections.push('');
+    sections.push('<!-- ══════════ Thymeleaf ══════════ -->');
+    sections.push(tabs.thymeleaf.trim());
+  }
+  if (tabs.html) {
+    sections.push('');
+    sections.push('<!-- ══════════ HTML/CSS (no-JS fallback) ══════════ -->');
+    sections.push(tabs.html.trim());
+  }
+  return sections.join('\n');
+};
 
 const preview: Preview = {
   parameters: {
@@ -14,9 +50,15 @@ const preview: Preview = {
     },
     backgrounds: { disable: true },
     docs: {
-      // 기본 autodocs 페이지를 커스텀 페이지로 교체.
-      // 각 스토리의 parameters.codeTabs가 있으면 4탭으로 렌더링된다.
-      page: CustomDocsPage,
+      source: {
+        transform: (code: string, storyContext: { parameters?: { codeTabs?: CodeTabs } }) => {
+          const tabs = storyContext?.parameters?.codeTabs;
+          if (tabs && (tabs.wc || tabs.react || tabs.thymeleaf || tabs.html)) {
+            return formatCodeTabs(tabs);
+          }
+          return code;
+        },
+      },
     },
   },
   globalTypes: {
