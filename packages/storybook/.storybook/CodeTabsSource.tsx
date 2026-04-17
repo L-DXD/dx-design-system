@@ -16,47 +16,41 @@ const TAB_LANGUAGES: Record<string, string> = {
   react: 'tsx',
 };
 
+type CodeTabsMap = Partial<Record<(typeof TAB_ORDER)[number], string>>;
+
 /**
- * Docs 페이지에서 스토리의 "Show code" 영역을 4탭 버전으로 교체.
- * parameters.codeTabs에 { html, wc, thymeleaf, react } 문자열이 있으면 탭으로 렌더.
- * 없으면 기본 동작(Storybook이 자동 생성하는 단일 코드)으로 폴백.
+ * 특정 스토리의 codeTabs를 4탭 UI로 렌더.
+ * CustomDocsPage에서 <Stories /> 대신 직접 사용한다.
  */
-export const CodeTabsSource: React.FC<{ of?: unknown; code?: string; language?: string }> = (
-  props,
-) => {
+export const CodeTabsForStory: React.FC<{ of: unknown }> = ({ of }) => {
   const [activeTab, setActiveTab] = useState<string>('wc');
   const [copied, setCopied] = useState(false);
 
-  // Storybook 컨텍스트에서 현재 스토리의 parameters를 가져온다
-  let codeTabs: Record<string, string> | undefined;
+  let codeTabs: CodeTabsMap | undefined;
   try {
-    // @ts-expect-error Storybook's useOf accepts 'story' type resolver
-    const resolved = useOf(props.of ?? 'story', ['story', 'meta']);
+    // @ts-expect-error useOf flexible arg
+    const resolved = useOf(of, ['story', 'meta']);
     if (resolved.type === 'story') {
-      codeTabs = resolved.story.parameters?.codeTabs;
+      codeTabs = resolved.story.parameters?.codeTabs as CodeTabsMap | undefined;
     } else if (resolved.type === 'meta') {
-      codeTabs = resolved.preparedMeta?.parameters?.codeTabs;
+      codeTabs = resolved.preparedMeta?.parameters?.codeTabs as CodeTabsMap | undefined;
     }
   } catch {
     codeTabs = undefined;
   }
 
-  // codeTabs가 없으면 기본 Source 동작 (전달받은 code를 그대로 렌더)
-  if (!codeTabs) {
-    return React.createElement(SyntaxHighlighter, {
-      language: props.language ?? 'html',
-      copyable: true,
-    }, props.code ?? '');
-  }
+  if (!codeTabs) return null;
 
   const availableTabs = TAB_ORDER.filter((k) => Boolean(codeTabs?.[k]));
+  if (availableTabs.length === 0) return null;
+
   const current = availableTabs.includes(activeTab as (typeof TAB_ORDER)[number])
     ? activeTab
     : availableTabs[0];
+  const currentCode = (codeTabs?.[current as keyof CodeTabsMap] ?? '').trim();
 
   const handleCopy = async () => {
-    if (!current || !codeTabs) return;
-    await navigator.clipboard.writeText(codeTabs[current]);
+    await navigator.clipboard.writeText(currentCode);
     setCopied(true);
     window.setTimeout(() => setCopied(false), 1500);
   };
@@ -68,7 +62,7 @@ export const CodeTabsSource: React.FC<{ of?: unknown; code?: string; language?: 
         border: '1px solid rgba(0,0,0,0.1)',
         borderRadius: 4,
         overflow: 'hidden',
-        margin: '16px 0',
+        margin: '16px 0 24px 0',
       },
     },
     React.createElement(
@@ -76,7 +70,6 @@ export const CodeTabsSource: React.FC<{ of?: unknown; code?: string; language?: 
       {
         style: {
           display: 'flex',
-          gap: 0,
           background: '#f6f9fc',
           borderBottom: '1px solid rgba(0,0,0,0.1)',
         },
@@ -96,7 +89,8 @@ export const CodeTabsSource: React.FC<{ of?: unknown; code?: string; language?: 
               border: 'none',
               background: current === key ? '#fff' : 'transparent',
               color: current === key ? '#1ea7fd' : '#666',
-              borderBottom: current === key ? '2px solid #1ea7fd' : '2px solid transparent',
+              borderBottom:
+                current === key ? '2px solid #1ea7fd' : '2px solid transparent',
               fontWeight: current === key ? 600 : 400,
               fontSize: 13,
               cursor: 'pointer',
@@ -125,15 +119,14 @@ export const CodeTabsSource: React.FC<{ of?: unknown; code?: string; language?: 
         copied ? 'Copied!' : 'Copy',
       ),
     ),
-    current
-      ? React.createElement(
-          SyntaxHighlighter,
-          {
-            language: TAB_LANGUAGES[current] ?? 'html',
-            copyable: false,
-          },
-          codeTabs[current] ?? '',
-        )
-      : null,
+    React.createElement(
+      SyntaxHighlighter,
+      {
+        language: TAB_LANGUAGES[current] ?? 'html',
+        copyable: false,
+        format: false,
+      },
+      currentCode,
+    ),
   );
 };

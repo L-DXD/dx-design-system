@@ -2,7 +2,7 @@ import '@dx/styles';
 import '@dx/core';
 
 import type { Preview } from '@storybook/web-components';
-import { CodeTabsSource } from './CodeTabsSource';
+import { CustomDocsPage } from './CustomDocsPage';
 
 const preview: Preview = {
   parameters: {
@@ -14,11 +14,9 @@ const preview: Preview = {
     },
     backgrounds: { disable: true },
     docs: {
-      components: {
-        // "Show code" 영역을 4탭 소스 컴포넌트로 교체
-        // parameters.codeTabs가 있으면 4탭, 없으면 기본 Source 동작으로 폴백
-        source: CodeTabsSource,
-      },
+      // 기본 autodocs 페이지를 커스텀 페이지로 교체.
+      // 각 스토리의 parameters.codeTabs가 있으면 4탭으로 렌더링된다.
+      page: CustomDocsPage,
     },
   },
   globalTypes: {

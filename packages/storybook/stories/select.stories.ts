@@ -3,7 +3,7 @@ import { html } from 'lit';
 import '@dx/core';
 
 const meta: Meta = {
-  title: 'Components/Select',
+  title: 'Atoms/Select',
   tags: ['autodocs'],
   parameters: {
     docs: {

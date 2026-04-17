@@ -3,7 +3,7 @@ import { html } from 'lit';
 import '@dx/core';
 
 const meta: Meta = {
-  title: 'Components/Button',
+  title: 'Atoms/Button',
   tags: ['autodocs'],
   argTypes: {
     variant: {

@@ -3,7 +3,7 @@ import { html } from 'lit';
 import '@dx/core';
 
 const meta: Meta = {
-  title: 'Components/Checkbox',
+  title: 'Atoms/Checkbox',
   tags: ['autodocs'],
   parameters: {
     docs: {

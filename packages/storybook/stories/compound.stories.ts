@@ -3,7 +3,7 @@ import { html } from 'lit';
 import '@dx/core';
 
 const meta: Meta = {
-  title: 'Compound/FormField & Label',
+  title: 'Molecules/FormField',
   tags: ['autodocs'],
   parameters: {
     docs: {
