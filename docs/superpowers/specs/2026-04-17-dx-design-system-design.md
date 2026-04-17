@@ -78,25 +78,29 @@ pnpm add @dx/react @dx/styles
 
 ### 설계 원칙
 
-- **Shadow DOM 없음**: Tailwind 클래스가 외부에서 그대로 적용됨. `class="mt-4"` 오버라이드 가능.
+- **Shadow DOM 유지**: Shoelace 내부 스타일을 보존하기 위해 Shadow DOM을 유지한다.
 - **태그 접두사 `ds-`**: 기존 HTML/Shoelace 태그와 충돌 방지.
 - **Slot 기반 컴포지션**: 자식 콘텐츠는 `<slot>`으로 전달 (React의 `children`과 동일).
 - **이벤트 접두사 `ds-`**: 네이티브 이벤트와 구분. Shoelace의 `sl-` 이벤트를 `ds-`로 재매핑.
 
-### Shadow DOM 비활성화 전략
+### 스타일 커스터마이징 전략
 
-Shoelace 컴포넌트는 기본적으로 Shadow DOM을 사용한다. DX 컴포넌트는 외부 Tailwind 클래스 오버라이드를 위해 Shadow DOM을 비활성화해야 한다.
+Shadow DOM은 유지하되, 다음 세 가지 방법으로 외부에서 스타일을 제어한다:
+
+1. **CSS Variables (주요 전략)**: `--dx-*` 및 `--sl-*` 변수는 Shadow DOM 경계를 관통한다. 서비스별 테마는 CSS Variables 오버라이드만으로 대부분 구현 가능.
+2. **`::part()` CSS**: Shoelace가 노출한 parts(`::part(base)`, `::part(label)` 등)를 통해 Shadow DOM 내부 요소에 스타일 적용.
+3. **외부 레이아웃/간격 클래스**: 컴포넌트 **외부**에 Tailwind 클래스 적용은 가능 (예: `<ds-button class="mt-4">`에서 `mt-4`는 호스트 요소에 적용됨). 단, 내부 버튼 요소에는 영향 없음.
 
 ```ts
-export class DsButton extends SlButton {
-  static override createRenderRoot() { return this; }
-}
+// 간단한 래핑만 수행. Shadow DOM은 Shoelace 기본값 유지.
+export class DsButton extends SlButton {}
+customElements.define('ds-button', DsButton);
 ```
 
 **트레이드오프:**
-- 스타일 캡슐화가 사라짐 → 전역 CSS가 컴포넌트 내부에 영향을 줄 수 있음
-- Shoelace 내부 CSS가 Shadow DOM 밖으로 노출됨 → `@dx/styles`의 `base.css`에서 Shoelace 내부 스타일을 전역으로 재등록해야 함
-- 이 접근이 Shoelace의 일부 컴포넌트에서 문제를 일으킬 수 있으므로, 구현 단계에서 컴포넌트별 검증이 필요함. Shadow DOM을 유지하면서 `::part()` CSS로 스타일링하는 대안도 컴포넌트별로 평가한다.
+- Tailwind 유틸리티로 컴포넌트 **내부** 스타일(예: 버튼의 `padding`, `background`)은 직접 오버라이드 불가
+- 대신 Shoelace의 검증된 스타일 시스템과 접근성을 그대로 활용
+- 깊은 커스터마이징이 필요하면 `::part()` 또는 CSS Variables로 해결
 
 ### Shoelace → DX 매핑
 
