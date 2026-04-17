@@ -120,6 +120,16 @@ Shoelace의 `sl-*` 이벤트는 `remapEvents` 유틸로 `ds-*`로 재디스패�
 - 주석은 **왜(Why)** 만 기록. 무엇(What)은 이름으로 드러낸다.
 - 불필요한 추상화/폴백 금지 (YAGNI, DRY)
 
+## 커밋 메시지
+
+- **모든 커밋 메시지는 한글로 작성한다.**
+- Conventional Commits 접두사는 영문 유지: `feat`, `fix`, `chore`, `docs`, `refactor`, `test`, `style`, `perf`.
+- 제목은 한글로 간결하게, 본문이 필요하면 한글로 상세히 기술.
+- 예시:
+  - ✅ `feat(core): ds-icon 컴포넌트 추가 (Lucide 아이콘 렌더링)`
+  - ✅ `fix(styles): Shadow DOM 비활성화로 인한 Shoelace 스타일 유실 수정`
+  - ❌ `feat(core): add ds-icon component` (영문 제목 금지)
+
 ---
 
 ## 참고 문서
