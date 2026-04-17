@@ -1,4 +1,8 @@
 export { Icon } from './components/icon.js';
+export { Label } from './components/label.js';
+export { FormField } from './components/form-field.js';
+export { HelperText } from './components/helper-text.js';
+export { ErrorMessage } from './components/error-message.js';
 export { Button } from './components/button.js';
 export { Input } from './components/input.js';
 export { Select } from './components/select.js';

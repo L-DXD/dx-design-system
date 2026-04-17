@@ -1,5 +1,9 @@
 export { remapEvents } from './utils/remap-events.js';
 export { DsIcon } from './components/icon.js';
+export { DsLabel } from './components/label.js';
+export { DsFormField } from './components/form-field.js';
+export { DsHelperText } from './components/helper-text.js';
+export { DsErrorMessage } from './components/error-message.js';
 export { DsButton } from './components/button.js';
 export { DsInput } from './components/input.js';
 export { DsSelect } from './components/select.js';

@@ -1,0 +1,74 @@
+/**
+ * Compound 폼 컴포넌트 기본 스타일.
+ * ds-label / ds-form-field / ds-helper-text / ds-error-message 는
+ * Light DOM 기반이므로 전역 CSS로 스타일을 입힌다.
+ */
+
+/* ------------------------------------------------------------
+ * ds-label
+ * ------------------------------------------------------------ */
+ds-label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--dx-space-1);
+  font-size: var(--dx-font-size-sm);
+  font-weight: var(--dx-font-weight-medium);
+  color: var(--dx-color-foreground);
+  line-height: var(--dx-line-height-snug);
+  user-select: none;
+}
+
+ds-label[html-for] {
+  cursor: pointer;
+}
+
+ds-label .ds-required-marker {
+  color: var(--dx-color-danger);
+  font-weight: var(--dx-font-weight-semibold);
+  line-height: 1;
+}
+
+/* ------------------------------------------------------------
+ * ds-form-field
+ * ------------------------------------------------------------ */
+ds-form-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--dx-space-2);
+  width: 100%;
+}
+
+ds-form-field[orientation='horizontal'] {
+  flex-direction: row;
+  align-items: center;
+  gap: var(--dx-space-2);
+  width: auto;
+}
+
+/* ------------------------------------------------------------
+ * ds-helper-text
+ * ------------------------------------------------------------ */
+ds-helper-text {
+  display: block;
+  font-size: var(--dx-font-size-xs);
+  color: var(--dx-color-muted-foreground);
+  line-height: var(--dx-line-height-normal);
+}
+
+ds-helper-text:empty {
+  display: none;
+}
+
+/* ------------------------------------------------------------
+ * ds-error-message
+ * ------------------------------------------------------------ */
+ds-error-message {
+  display: block;
+  font-size: var(--dx-font-size-xs);
+  color: var(--dx-color-danger);
+  line-height: var(--dx-line-height-normal);
+}
+
+ds-error-message:empty {
+  display: none;
+}
