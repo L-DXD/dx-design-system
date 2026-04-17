@@ -4,10 +4,6 @@
 
 Shoelace(Lit Web Components) 기반 멀티 플랫폼 디자인 시스템. React/Next.js + Thymeleaf 동시 지원.
 
-**담당자:**
-- 주담당: 민경미
-- 부담당: 이자영 (개발 환경 셋팅, Foundation, Atoms, 인프라)
-
 **목적/목표 (내부 서비스):**
 - 일관된 사용자 경험(UX) 제공
 - 작업 생산성 및 효율성 극대화
@@ -23,26 +19,16 @@ Shoelace(Lit Web Components) 기반 멀티 플랫폼 디자인 시스템. React/
 
 ---
 
-## Atomic Design 로드맵 (2026년)
+## Atomic Design 작업 순서
 
 작업은 **반드시 아래 단계 순서대로** 진행한다. 상위 단계를 건너뛰고 하위 단계를 먼저 만들지 않는다.
 
-| 월 | 담당 | 단계 | 내용 |
-|----|------|------|------|
-| 4월 | 자영 | **개발 환경 셋팅** | React, Vite, Storybook, Tailwind, CLAUDE.md |
-| 5월 | 자영 | **0단계 Foundation** | Color, Typography, Spacing & Grid, Icons |
-| 5월 | 경미 | 학습 | React.js, Next.js 학습 |
-| 6월 | 자영 | **1단계 Atoms** | Button, Input, Checkbox, Badge 등 |
-| 6월 | 경미 | 리서치 | 패턴 수집 |
-| 7월 | 경미 | **2단계 Molecules** | 검색 바(입력창+버튼), 폼 필드(라벨+입력창+오류) |
-| 8월 | 경미 | **3단계 Organisms** | Header, Nav, Card List, Footer |
-| 9월 | 경미 | **4단계 Templates** | 레이아웃 와이어프레임 |
-| 10월 | 경미 | **5단계 Pages** | 실제 콘텐츠 적용, 테스트 |
-| 11월 | 경미 | 문서화 마무리 | — |
-| 11월 | 자영 | 배포 | MCP 구축 또는 npm 패키지 배포 |
-| 12월 | — | 완성 | 실제 서비스 접목 |
-
-**현재 시점(2026-04):** 4월 개발 환경 셋팅 단계. 5월부터 0단계 Foundation에 집중.
+1. **0단계 Foundation** — Color, Typography, Spacing & Grid, Icons
+2. **1단계 Atoms** — Button, Input, Checkbox, Badge 등
+3. **2단계 Molecules** — 검색 바(입력창+버튼), 폼 필드(라벨+입력창+오류)
+4. **3단계 Organisms** — Header, Nav, Card List, Footer
+5. **4단계 Templates** — 레이아웃 와이어프레임
+6. **5단계 Pages** — 실제 콘텐츠 적용, 테스트
 
 **중요:** 초기 셋업 과정에서 Atoms(Button, Input 등)를 먼저 구축한 상태이나, 이는 Shoelace 래핑 패턴 검증을 위한 것. Foundation이 완성되기 전까지 Atoms는 **임시 상태**로 취급하며, Foundation 완료 후 토큰 기반으로 재정비한다.
 
