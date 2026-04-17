@@ -5,20 +5,33 @@ import '@dx/core';
 const meta: Meta = {
   title: 'Components/Toggle',
   tags: ['autodocs'],
-  argTypes: {
-    size: {
-      control: 'select',
-      options: ['small', 'medium', 'large'],
-    },
-    checked: { control: 'boolean' },
-    disabled: { control: 'boolean' },
-  },
   parameters: {
+    docs: {
+      description: {
+        component:
+          'On/Off 스위치. Checkbox와 동일하게 `<ds-form-field orientation="horizontal">` 로 Label과 조립.',
+      },
+    },
     codeTabs: {
-      html: `<label class="inline-flex items-center cursor-pointer gap-2">\n  <input type="checkbox" role="switch" class="sr-only peer">\n  <div class="relative w-11 h-6 bg-gray-200 peer-focus:ring-4 rounded-full peer peer-checked:bg-primary"></div>\n  <span class="text-sm">알림 수신</span>\n</label>`,
-      wc: `<ds-toggle>알림 수신</ds-toggle>\n<ds-toggle checked>다크모드</ds-toggle>`,
-      thymeleaf: `<ds-toggle th:checked="\${enabled}">[[#{setting.notifications}]]</ds-toggle>`,
-      react: `import { Toggle } from '@dx/react';\n\n<Toggle checked={enabled} onDsChange={(e) => setEnabled(e.target.checked)}>\n  알림 수신\n</Toggle>`,
+      html: `<label class="inline-flex items-center gap-2 cursor-pointer">
+  <input type="checkbox" id="notify" role="switch" class="sr-only peer" />
+  <div class="relative w-11 h-6 bg-gray-200 rounded-full peer-checked:bg-primary"></div>
+  <span class="text-sm font-medium">알림 수신</span>
+</label>`,
+      wc: `<ds-form-field orientation="horizontal">
+  <ds-toggle id="notify"></ds-toggle>
+  <ds-label html-for="notify">알림 수신</ds-label>
+</ds-form-field>`,
+      thymeleaf: `<ds-form-field orientation="horizontal">
+  <ds-toggle th:id="\${id}" th:checked="\${enabled}"></ds-toggle>
+  <ds-label th:attr="html-for=\${id}" th:text="#{setting.notifications}"></ds-label>
+</ds-form-field>`,
+      react: `import { FormField, Toggle, Label } from '@dx/react';
+
+<FormField orientation="horizontal">
+  <Toggle id="notify" checked={enabled} onDsChange={(e) => setEnabled(e.target.checked)} />
+  <Label htmlFor="notify">알림 수신</Label>
+</FormField>`,
     },
   },
 };
@@ -27,36 +40,71 @@ export default meta;
 type Story = StoryObj;
 
 export const Default: Story = {
-  render: (args) => html`
-    <ds-toggle
-      size=${args.size || 'medium'}
-      ?checked=${args.checked}
-      ?disabled=${args.disabled}
-    >
-      알림 수신
-    </ds-toggle>
+  render: () => html`
+    <ds-form-field orientation="horizontal">
+      <ds-toggle id="toggle-default"></ds-toggle>
+      <ds-label html-for="toggle-default">알림 수신</ds-label>
+    </ds-form-field>
   `,
 };
 
 export const Checked: Story = {
-  render: () => html`<ds-toggle checked>다크 모드 활성화</ds-toggle>`,
+  render: () => html`
+    <ds-form-field orientation="horizontal">
+      <ds-toggle id="toggle-checked" checked></ds-toggle>
+      <ds-label html-for="toggle-checked">다크 모드 활성화</ds-label>
+    </ds-form-field>
+  `,
 };
 
 export const Disabled: Story = {
   render: () => html`
     <div style="display: flex; flex-direction: column; gap: 8px;">
-      <ds-toggle disabled>비활성화 (꺼짐)</ds-toggle>
-      <ds-toggle disabled checked>비활성화 (켜짐)</ds-toggle>
+      <ds-form-field orientation="horizontal">
+        <ds-toggle id="toggle-dis-off" disabled></ds-toggle>
+        <ds-label html-for="toggle-dis-off">비활성화 (꺼짐)</ds-label>
+      </ds-form-field>
+      <ds-form-field orientation="horizontal">
+        <ds-toggle id="toggle-dis-on" disabled checked></ds-toggle>
+        <ds-label html-for="toggle-dis-on">비활성화 (켜짐)</ds-label>
+      </ds-form-field>
     </div>
   `,
 };
 
-export const Sizes: Story = {
+export const SettingsPanel: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story: '설정 패널에서 자주 쓰이는 Toggle + Label + HelperText 조합.',
+      },
+    },
+  },
   render: () => html`
-    <div style="display: flex; gap: 16px; align-items: center;">
-      <ds-toggle size="small">Small</ds-toggle>
-      <ds-toggle size="medium">Medium</ds-toggle>
-      <ds-toggle size="large">Large</ds-toggle>
+    <div style="display: flex; flex-direction: column; gap: 16px; max-width: 420px;">
+      <ds-form-field>
+        <ds-form-field orientation="horizontal">
+          <ds-toggle id="s-notify" checked></ds-toggle>
+          <ds-label html-for="s-notify">이메일 알림</ds-label>
+        </ds-form-field>
+        <ds-helper-text>새 댓글, 멘션, 할당 등 중요한 이벤트를 이메일로 받습니다.</ds-helper-text>
+      </ds-form-field>
+
+      <ds-form-field>
+        <ds-form-field orientation="horizontal">
+          <ds-toggle id="s-push"></ds-toggle>
+          <ds-label html-for="s-push">푸시 알림</ds-label>
+        </ds-form-field>
+        <ds-helper-text>브라우저 푸시 알림을 허용해야 동작합니다.</ds-helper-text>
+      </ds-form-field>
+
+      <ds-form-field>
+        <ds-form-field orientation="horizontal">
+          <ds-toggle id="s-dark"></ds-toggle>
+          <ds-label html-for="s-dark">다크 모드</ds-label>
+        </ds-form-field>
+        <ds-helper-text>시스템 설정과 독립적으로 사용할 수 있습니다.</ds-helper-text>
+      </ds-form-field>
     </div>
   `,
 };
