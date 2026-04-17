@@ -1,18 +1,24 @@
 {
-  "name": "styles",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "name": "@dx/styles",
+  "version": "0.1.0",
+  "description": "DX Design System styles — CSS Variables + Tailwind + Shoelace theme",
+  "main": "dist/styles.css",
+  "exports": {
+    ".": "./dist/styles.css",
+    "./tokens": "./src/tokens.css"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "packageManager": "pnpm@10.12.2",
+  "files": ["dist", "src"],
+  "scripts": {
+    "build": "postcss src/themes/default.css -o dist/styles.css",
+    "dev": "postcss src/themes/default.css -o dist/styles.css --watch"
+  },
+  "dependencies": {
+    "@shoelace-style/shoelace": "^2"
+  },
   "devDependencies": {
-    "autoprefixer": "^10.5.0",
-    "postcss": "^8.5.10",
-    "tailwindcss": "^4.2.2"
+    "@tailwindcss/postcss": "^4",
+    "postcss": "^8",
+    "postcss-cli": "^11",
+    "tailwindcss": "^4"
   }
 }

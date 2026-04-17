@@ -1,0 +1,57 @@
+/* DX tokens → Shoelace CSS variable mapping */
+:root {
+  /* Primary */
+  --sl-color-primary-50: color-mix(in srgb, var(--dx-color-primary) 10%, white);
+  --sl-color-primary-100: color-mix(in srgb, var(--dx-color-primary) 20%, white);
+  --sl-color-primary-200: color-mix(in srgb, var(--dx-color-primary) 30%, white);
+  --sl-color-primary-300: color-mix(in srgb, var(--dx-color-primary) 50%, white);
+  --sl-color-primary-400: color-mix(in srgb, var(--dx-color-primary) 70%, white);
+  --sl-color-primary-500: color-mix(in srgb, var(--dx-color-primary) 85%, white);
+  --sl-color-primary-600: var(--dx-color-primary);
+  --sl-color-primary-700: var(--dx-color-primary-hover);
+  --sl-color-primary-800: color-mix(in srgb, var(--dx-color-primary) 85%, black);
+  --sl-color-primary-900: color-mix(in srgb, var(--dx-color-primary) 70%, black);
+  --sl-color-primary-950: color-mix(in srgb, var(--dx-color-primary) 50%, black);
+
+  /* Danger (destructive) */
+  --sl-color-danger-600: var(--dx-color-destructive);
+  --sl-color-danger-700: var(--dx-color-destructive-hover);
+
+  /* Neutral */
+  --sl-color-neutral-0: var(--dx-color-background);
+  --sl-color-neutral-50: var(--dx-color-muted);
+  --sl-color-neutral-300: var(--dx-color-border);
+  --sl-color-neutral-500: var(--dx-color-muted-foreground);
+  --sl-color-neutral-700: var(--dx-color-secondary);
+  --sl-color-neutral-900: var(--dx-color-foreground);
+  --sl-color-neutral-1000: var(--dx-color-foreground);
+
+  /* Typography */
+  --sl-font-sans: var(--dx-font-sans);
+  --sl-font-size-small: var(--dx-font-size-sm);
+  --sl-font-size-medium: var(--dx-font-size-base);
+  --sl-font-size-large: var(--dx-font-size-lg);
+
+  /* Border Radius */
+  --sl-border-radius-small: var(--dx-radius-sm);
+  --sl-border-radius-medium: var(--dx-radius);
+  --sl-border-radius-large: var(--dx-radius-lg);
+  --sl-border-radius-pill: var(--dx-radius-full);
+
+  /* Input */
+  --sl-input-border-radius-small: var(--dx-radius-sm);
+  --sl-input-border-radius-medium: var(--dx-radius);
+  --sl-input-border-radius-large: var(--dx-radius-lg);
+  --sl-input-border-color: var(--dx-color-border);
+  --sl-input-border-color-focus: var(--dx-color-ring);
+
+  /* Focus Ring */
+  --sl-focus-ring-color: var(--dx-color-ring);
+  --sl-focus-ring-width: 2px;
+  --sl-focus-ring-offset: 2px;
+
+  /* Shadow */
+  --sl-shadow-small: var(--dx-shadow-sm);
+  --sl-shadow-medium: var(--dx-shadow-md);
+  --sl-shadow-large: var(--dx-shadow-lg);
+}
