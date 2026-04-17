@@ -1,1 +1,1 @@
-// @dx/core — entry point
+export { DsButton } from './components/button.js';
