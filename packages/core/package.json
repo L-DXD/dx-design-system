@@ -13,14 +13,17 @@
     },
     "./bundle": "./dist/dx-core.bundle.js"
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "vite build && vite build --config vite.config.bundle.ts",
     "dev": "vite build --watch"
   },
   "dependencies": {
+    "@shoelace-style/shoelace": "^2",
     "lit": "^3",
-    "@shoelace-style/shoelace": "^2"
+    "lucide": "^1.8.0"
   },
   "devDependencies": {
     "typescript": "^6",

@@ -1,4 +1,5 @@
 export { remapEvents } from './utils/remap-events.js';
+export { DsIcon } from './components/icon.js';
 export { DsButton } from './components/button.js';
 export { DsInput } from './components/input.js';
 export { DsSelect } from './components/select.js';
