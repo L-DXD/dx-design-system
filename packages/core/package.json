@@ -1,20 +1,32 @@
 {
-  "name": "core",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "name": "@dx/core",
+  "version": "0.1.0",
+  "description": "DX Design System — Lit Web Components (Shoelace-based)",
+  "type": "module",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./bundle": "./dist/dx-core.bundle.js"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "packageManager": "pnpm@10.12.2",
+  "files": ["dist"],
+  "scripts": {
+    "build": "vite build && vite build --config vite.config.bundle.ts && tsc --emitDeclarationOnly --outDir dist",
+    "dev": "vite build --watch"
+  },
   "dependencies": {
-    "lit": "^3.3.2"
+    "lit": "^3",
+    "@shoelace-style/shoelace": "^2"
   },
   "devDependencies": {
-    "typescript": "^6.0.2",
-    "vite": "^8.0.8"
+    "typescript": "^6",
+    "vite": "^8"
+  },
+  "peerDependencies": {
+    "@dx/styles": "workspace:*"
   }
 }

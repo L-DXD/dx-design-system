@@ -14,15 +14,21 @@ importers:
 
   packages/core:
     dependencies:
+      '@dx/styles':
+        specifier: workspace:*
+        version: link:../styles
+      '@shoelace-style/shoelace':
+        specifier: ^2
+        version: 2.20.1(@floating-ui/utils@0.2.11)(@types/react@19.2.14)
       lit:
-        specifier: ^3.3.2
+        specifier: ^3
         version: 3.3.2
     devDependencies:
       typescript:
-        specifier: ^6.0.2
+        specifier: ^6
         version: 6.0.2
       vite:
-        specifier: ^8.0.8
+        specifier: ^8
         version: 8.0.8(jiti@2.6.1)(yaml@2.8.3)
 
   packages/storybook: {}
