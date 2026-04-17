@@ -2,6 +2,7 @@ import '@dx/styles';
 import '@dx/core';
 
 import type { Preview } from '@storybook/web-components';
+import axeKoLocale from 'axe-core/locales/ko.json';
 
 const preview: Preview = {
   parameters: {
@@ -12,6 +13,12 @@ const preview: Preview = {
       },
     },
     backgrounds: { disable: true },
+    a11y: {
+      // axe-core 한국어 로케일 적용. 규칙 이름/설명/권장사항이 한국어로 표시됨.
+      config: {
+        locale: axeKoLocale,
+      },
+    },
   },
   globalTypes: {
     theme: {

@@ -86,6 +86,9 @@ importers:
       '@types/react':
         specifier: ^19
         version: 19.2.14
+      axe-core:
+        specifier: ^4.11.3
+        version: 4.11.3
       lit:
         specifier: ^3
         version: 3.3.2
