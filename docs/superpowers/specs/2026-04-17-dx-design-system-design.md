@@ -58,15 +58,18 @@ pnpm add @dx/react @dx/styles
 ```
 
 **Thymeleaf (CDN):**
+
+패키지는 npmjs.com에 동시 배포되며, jsdelivr/unpkg가 자동으로 CDN을 제공한다.
+
 ```html
-<script type="module" src="https://cdn.jsdelivr.net/npm/@dx/core/dist/dx-core.bundle.js"></script>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@dx/styles/dist/styles.css">
+<script type="module" src="https://cdn.jsdelivr.net/npm/@dx/core@1/dist/dx-core.bundle.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@dx/styles@1/dist/styles.css">
 ```
 
 **순수 HTML:**
 ```html
-<script type="module" src="https://cdn.jsdelivr.net/npm/@dx/core/dist/dx-core.bundle.js"></script>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@dx/styles/dist/styles.css">
+<script type="module" src="https://cdn.jsdelivr.net/npm/@dx/core@1/dist/dx-core.bundle.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@dx/styles@1/dist/styles.css">
 ```
 
 ---
@@ -80,6 +83,21 @@ pnpm add @dx/react @dx/styles
 - **Slot 기반 컴포지션**: 자식 콘텐츠는 `<slot>`으로 전달 (React의 `children`과 동일).
 - **이벤트 접두사 `ds-`**: 네이티브 이벤트와 구분. Shoelace의 `sl-` 이벤트를 `ds-`로 재매핑.
 
+### Shadow DOM 비활성화 전략
+
+Shoelace 컴포넌트는 기본적으로 Shadow DOM을 사용한다. DX 컴포넌트는 외부 Tailwind 클래스 오버라이드를 위해 Shadow DOM을 비활성화해야 한다.
+
+```ts
+export class DsButton extends SlButton {
+  static override createRenderRoot() { return this; }
+}
+```
+
+**트레이드오프:**
+- 스타일 캡슐화가 사라짐 → 전역 CSS가 컴포넌트 내부에 영향을 줄 수 있음
+- Shoelace 내부 CSS가 Shadow DOM 밖으로 노출됨 → `@dx/styles`의 `base.css`에서 Shoelace 내부 스타일을 전역으로 재등록해야 함
+- 이 접근이 Shoelace의 일부 컴포넌트에서 문제를 일으킬 수 있으므로, 구현 단계에서 컴포넌트별 검증이 필요함. Shadow DOM을 유지하면서 `::part()` CSS로 스타일링하는 대안도 컴포넌트별로 평가한다.
+
 ### Shoelace → DX 매핑
 
 | DX 컴포넌트 | Shoelace 원본 | 비고 |
@@ -88,7 +106,7 @@ pnpm add @dx/react @dx/styles
 | `ds-input` | `sl-input` | label, help-text 슬롯 내장 |
 | `ds-select` + `ds-option` | `sl-select` + `sl-option` | 키보드, 포지셔닝 내장 |
 | `ds-checkbox` | `sl-checkbox` | 접근성 내장 |
-| `ds-radio` | `sl-radio-group` + `sl-radio` | 그룹 관리 내장 |
+| `ds-radio-group` + `ds-radio` | `sl-radio-group` + `sl-radio` | 그룹 관리 내장 |
 | `ds-badge` | `sl-badge` | pulse 애니메이션 옵션 포함 |
 | `ds-chip` | `sl-tag` | removable, size 지원 |
 | `ds-toggle` | `sl-switch` | 접근성 내장 |
@@ -102,7 +120,8 @@ pnpm add @dx/react @dx/styles
 | `ds-select` | `value`, `placeholder`, `disabled`, `error` | `ds-change` | default (ds-option 목록) |
 | `ds-option` | `value`, `disabled` | — | default (라벨) |
 | `ds-checkbox` | `checked`, `disabled`, `value` | `ds-change` | default (라벨) |
-| `ds-radio` | `checked`, `disabled`, `name`, `value` | `ds-change` | default (라벨) |
+| `ds-radio-group` | `name`, `value`, `disabled` | `ds-change` | default (ds-radio 목록) |
+| `ds-radio` | `value`, `disabled` | — | default (라벨) |
 | `ds-badge` | `variant` (default/secondary/destructive/outline), `size` (sm/md) | — | default (텍스트) |
 | `ds-chip` | `variant` (default/outline), `removable`, `selected` | `ds-remove`, `ds-select` | default (텍스트) |
 | `ds-toggle` | `checked`, `disabled`, `size` (sm/md) | `ds-change` | default (라벨) |
@@ -140,7 +159,10 @@ export const Button = createComponent({
 
 ### 4탭 사용 예시 (Select 기준)
 
-**HTML/CSS:**
+**HTML/CSS (no-JS fallback):**
+
+HTML/CSS 탭은 Web Component 없이도 사용 가능한 순수 HTML 폴백을 제공한다. 인터랙션(키보드 네비게이션, 포지셔닝 등)은 Web Component 버전과 동일하지 않으며, 스타일만 일치시키는 것이 목표다.
+
 ```html
 <select class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
   <option value="">선택하세요</option>
@@ -302,7 +324,7 @@ export const Primary: StoryObj = {
 
 ```json
 {
-  "pipeline": {
+  "tasks": {
     "build": { "dependsOn": ["^build"], "outputs": ["dist/**"] },
     "dev": { "cache": false, "persistent": true },
     "lint": {},
@@ -344,7 +366,7 @@ PR 머지 (main)
   ↓ 동시 실행
 ├── GitHub Packages: @dx/core, @dx/react, @dx/styles 배포
 ├── GitHub Pages: Storybook 문서 사이트 배포
-└── CDN: bundle.js + styles.css (jsdelivr가 GitHub Packages에서 자동 제공)
+└── CDN: bundle.js + styles.css (npmjs.com에 동시 배포 → jsdelivr/unpkg에서 자동 제공)
 ```
 
 ### 버전 관리 (changesets)
@@ -356,6 +378,35 @@ PR 머지 (main)
 ```
 
 독립 버전 관리. 토큰만 바뀌면 styles만 패치, 컴포넌트가 바뀌면 core + react 같이 올림.
+
+---
+
+## 5. SSR 고려사항 (Next.js)
+
+Web Components는 브라우저 API(`customElements.define`)에 의존하기 때문에 서버에서 렌더링되지 않는다. Next.js에서 `@dx/react` 컴포넌트를 사용할 때:
+
+- `@dx/react` 컴포넌트를 사용하는 파일에 `'use client'` 지시어를 선언해야 한다.
+- 서버 렌더링 시 Web Component 태그는 빈 요소로 전달되고, 클라이언트에서 hydration 후 렌더링된다.
+- FOUC(Flash of Unstyled Content)를 방지하기 위해 `@dx/styles`의 CSS를 `<head>`에서 로드한다.
+
+```tsx
+'use client';
+import { Button } from '@dx/react';
+
+export function SaveButton() {
+  return <Button variant="primary">저장하기</Button>;
+}
+```
+
+---
+
+## 6. 접근성
+
+Shoelace 컴포넌트는 WCAG 2.1 AA 수준의 접근성을 기본 제공한다. DX 디자인 시스템은 이를 그대로 상속하며:
+
+- **키보드 네비게이션**: 모든 인터랙티브 컴포넌트에 내장 (Tab, Enter, Escape, 화살표 키)
+- **ARIA 속성**: Shoelace가 자동으로 `aria-expanded`, `aria-selected`, `role` 등을 관리
+- **자동 테스트**: Storybook에 `@storybook/addon-a11y` (axe-core 기반)를 추가하여 각 스토리에서 접근성 위반을 자동 검출
 
 ---
 
