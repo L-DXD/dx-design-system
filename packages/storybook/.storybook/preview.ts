@@ -13,6 +13,18 @@ const preview: Preview = {
       },
     },
     backgrounds: { disable: true },
+    options: {
+      storySort: {
+        order: [
+          'Foundation',
+          'Atoms',
+          'Molecules',
+          'Organisms',
+          'Templates',
+          'Pages',
+        ],
+      },
+    },
     a11y: {
       // axe-core 한국어 로케일 적용. 규칙 이름/설명/권장사항이 한국어로 표시됨.
       config: {

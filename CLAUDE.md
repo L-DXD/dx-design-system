@@ -5,6 +5,7 @@
 Shoelace(Lit Web Components) 기반 멀티 플랫폼 디자인 시스템. React/Next.js + Thymeleaf 동시 지원.
 
 **목적/목표 (내부 서비스):**
+
 - 일관된 사용자 경험(UX) 제공
 - 작업 생산성 및 효율성 극대화
 - 개발 요청 시 원활한 커뮤니케이션
@@ -12,6 +13,7 @@ Shoelace(Lit Web Components) 기반 멀티 플랫폼 디자인 시스템. React/
 - 새로운 시스템 개발 시마다 반복되는 스타일 재정의 리소스 낭비 방지
 
 **모노레포 구조:**
+
 - `@dx/core` — Shoelace 컴포넌트를 `ds-*` 접두사로 래핑한 Web Components
 - `@dx/react` — `@lit/react` 기반 React 래퍼
 - `@dx/styles` — CSS Variables + Tailwind + Shoelace 테마
@@ -124,13 +126,13 @@ Storybook 의 **Accessibility 패널** 에서 axe-core violations 를 확인한�
 
 변경의 성격에 따라 **관련 문서를 같은 커밋에서** 함께 업데이트한다. 문서는 다음 네 갈래로 관리된다:
 
-| 변경 유형 | 업데이트해야 하는 문서 |
-|----------|---------------------|
-| 소비자가 쓰는 사용법/컴포넌트 API/테마 변수 | `README.md` (서비스 사용자 기준) |
-| 아키텍처·구조적 결정 | `docs/architecture.md` |
-| 패키지 구조·워크플로우·컴포넌트 추가 방법 | `docs/contributing.md` |
-| Claude 작업 지침 (본 문서의 원칙에 영향) | `CLAUDE.md` |
-| 초기 설계·구현 로드맵 기록 | `docs/superpowers/specs/` · `docs/superpowers/plans/` |
+| 변경 유형                                   | 업데이트해야 하는 문서                                |
+| ------------------------------------------- | ----------------------------------------------------- |
+| 소비자가 쓰는 사용법/컴포넌트 API/테마 변수 | `README.md` (서비스 사용자 기준)                      |
+| 아키텍처·구조적 결정                        | `docs/architecture.md`                                |
+| 패키지 구조·워크플로우·컴포넌트 추가 방법   | `docs/contributing.md`                                |
+| Claude 작업 지침 (본 문서의 원칙에 영향)    | `CLAUDE.md`                                           |
+| 초기 설계·구현 로드맵 기록                  | `docs/superpowers/specs/` · `docs/superpowers/plans/` |
 
 **원칙:**
 

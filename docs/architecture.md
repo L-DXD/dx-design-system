@@ -12,7 +12,8 @@ DX Design System을 구성하는 구조적 결정과 상세 원리. `CLAUDE.md` 
 - [4. 이벤트 접두사 `ds-`](#4-이벤트-접두사-ds-)
 - [5. 멀티 플랫폼 (Write Once, Use Everywhere)](#5-멀티-플랫폼-write-once-use-everywhere)
 - [6. CSS Variables 기반 테마](#6-css-variables-기반-테마)
-- [7. 다크모드](#7-다크모드)
+- [7. Grid 토큰의 철학과 한계](#7-grid-토큰의-철학과-한계)
+- [8. 다크모드](#8-다크모드)
 
 ---
 
@@ -132,7 +133,35 @@ React 래퍼는 `createComponent` 의 `events` 매핑에서도 `ds-*` 이름을 
 
 ---
 
-## 7. 다크모드
+## 7. Grid 토큰의 철학과 한계
+
+Foundation 0단계에 **Breakpoint / Container / Grid** 관련 CSS 토큰(`--dx-breakpoint-*`, `--dx-container-*`, `--dx-grid-columns`, `--dx-grid-gutter`) 을 정의한다.
+
+### 7-1. 왜 토큰만 먼저 만드는가
+
+Atomic Design 작업 순서상 Foundation 의 목적은 "이후 단계(Atoms, Molecules, Organisms) 가 참조할 기준치의 확립" 이다. `.dx-container` 유틸 클래스나 `<ds-grid>` Web Component 를 Molecules/Organisms 경험 없이 미리 설계하면, 실제 쓸 때 맞지 않아 재설계하게 될 확률이 크다(YAGNI). 따라서 이 단계에서는 값의 **단일 진실 공급원(SSOT)** 만 확정하고, 유틸/컴포넌트는 필요가 드러나면 별도 스펙으로 도입한다.
+
+### 7-2. Tailwind 기본값과 정렬한 이유
+
+Breakpoint 값은 Tailwind v4 기본값(`640 / 768 / 1024 / 1280 / 1536`) 과 동일하게 둔다. `@dx/styles` 가 이미 Tailwind 로 빌드되어 소비자에게 전달되므로, Tailwind 유틸(`md:` 등) 을 쓰는 소비자는 우리 토큰과 같은 지점에서 반응한다. 사내 실사용 뷰포트 통계가 축적되기 전에 커스텀 값을 도입하는 것은 추측 기반 결정이므로 미룬다. 서비스는 `theme.css` 에서 `:root` 스코프로 이 토큰을 오버라이드할 수 있다.
+
+### 7-3. CSS 변수의 `@media` 한계 대응
+
+CSS 사양상 `@media (min-width: var(--dx-breakpoint-md))` 는 **동작하지 않는다**. 따라서 토큰은 다음 세 용도로만 쓴다.
+
+1. **값의 SSOT** — 서비스마다 "어느 지점에서 분기하는가" 의 공식 기준 제공.
+2. **JavaScript 런타임 참조** — `getComputedStyle` 로 값 조회. 단, SSR 환경에서는 `typeof window !== 'undefined'` 가드 필수.
+3. **테마 관리 일관성** — 향후 유틸/WC 도입 시 내부 반응형 로직이 동일 토큰을 참조하도록 보장.
+
+실제 반응형 분기(`@media` 쿼리, Tailwind `md:` 접두사) 는 리터럴 값 또는 Tailwind 유틸로 작성한다. 자세한 사용법은 Storybook `Foundation/Grid/UsageGuide` 및 README "Breakpoint 토큰 사용" 섹션 참고.
+
+### 7-4. 다크모드와의 관계
+
+Grid 토큰은 **테마 독립적**(라이트/다크 모두 동일값) 이다. 따라서 `.dark` / `prefers-color-scheme: dark` 오버라이드 블록에 포함시키지 않는다.
+
+---
+
+## 8. 다크모드
 
 CSS Variables 기반 다크모드. 세 가지 활성화 방식을 지원한다.
 

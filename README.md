@@ -37,6 +37,19 @@ Shoelace(Lit Web Components) 기반 멀티 플랫폼 디자인 시스템. **Reac
 - **`@dx/core`** — 모든 `ds-*` Web Components (Thymeleaf/HTML/React 공통)
 - **`@dx/react`** — React 컴포넌트 래퍼 (React/Next.js 전용)
 
+### Tailwind CSS는 설치되지 않습니다
+
+`@dx/styles` 는 빌드 시점에 Tailwind를 CSS로 컴파일해 `dist/styles.css` 에 내장합니다. 따라서 `pnpm add @dx/styles` 로 설치해도 소비자 프로젝트의 `node_modules` 에 `tailwindcss` 패키지가 들어오지는 않습니다.
+
+| 하려는 것 | Tailwind 설치 필요? |
+| --- | --- |
+| `ds-*` 컴포넌트 사용 · `@dx/styles` 로드 | ❌ 불필요 |
+| 테마 커스터마이징에서 Tailwind 팔레트 변수(`--color-indigo-600` 등) 사용 | ❌ `dist/styles.css` 에 포함되어 있음 |
+| Breakpoint 토큰(`--dx-breakpoint-md` 등)을 `@media` 에서 사용 | ❌ 값은 Tailwind 기본값과 일치 |
+| 소비자 마크업에 `class="md:flex p-4"` 같은 **Tailwind 유틸 클래스 직접 작성** | ✅ **소비자 프로젝트에 Tailwind 별도 설치/설정 필요** |
+
+아래 각 환경 예시는 **Tailwind를 설치하지 않은 상태** 를 전제로 합니다. 유틸 클래스까지 쓰려면 해당 환경의 Tailwind 설정을 추가하세요 (Thymeleaf 섹션의 "Tailwind를 Thymeleaf에서 쓰기" 참고).
+
 ---
 
 ## React / Next.js
@@ -209,6 +222,41 @@ Tailwind 22개 팔레트(`--color-indigo-600` 등)에서 원하는 컬러 선택
 ```
 
 서비스에서 `@dx/styles` 다음에 자신의 `theme.css`를 로드하면 오버라이드가 적용됩니다.
+
+### Breakpoint 토큰 사용
+
+`@dx/styles` 는 Tailwind v4 기본값과 정렬된 breakpoint 토큰(`--dx-breakpoint-sm` ~ `--dx-breakpoint-2xl`) 을 제공합니다. CSS 변수는 `@media` 쿼리 인자로 직접 쓸 수 없다는 스펙 제약이 있으므로, 실제 반응형 분기는 다음 세 가지 방식으로 작성합니다.
+
+**1. `@media` 리터럴:**
+
+```css
+@media (min-width: 768px) {
+  .my-layout {
+    display: grid;
+    grid-template-columns: repeat(var(--dx-grid-columns), 1fr);
+    gap: var(--dx-grid-gutter);
+  }
+}
+```
+
+**2. Tailwind 유틸 (Tailwind 설치한 소비자):**
+
+```html
+<div class="md:grid md:grid-cols-12 md:gap-6">...</div>
+```
+
+**3. JavaScript 참조 (SSR 가드 필수):**
+
+```ts
+if (typeof window !== 'undefined') {
+  const md = parseInt(
+    getComputedStyle(document.documentElement).getPropertyValue('--dx-breakpoint-md'),
+  );
+  if (window.innerWidth >= md) { /* ... */ }
+}
+```
+
+더 자세한 내용은 Storybook `Foundation/Grid` 카테고리를 참고하세요.
 
 ---
 

@@ -342,4 +342,30 @@
   --dx-z-popover: 1050;
   --dx-z-toast: 1060;
   --dx-z-tooltip: 1070;
+
+  /* ============================================================
+   *  8. BREAKPOINTS / CONTAINER / GRID
+   *  Tailwind v4 기본값과 정렬. 테마 독립적이므로 .dark 오버라이드 없음.
+   *  CSS 변수는 @media 인자로 직접 쓸 수 없으므로(스펙 제약),
+   *  실제 반응형 분기는 Tailwind 유틸 `md:` 또는 `@media (min-width: 768px)`
+   *  리터럴로 작성한다. 자세한 용도는 grid.stories.ts 참고.
+   * ============================================================ */
+
+  /* Breakpoints */
+  --dx-breakpoint-sm: 640px;
+  --dx-breakpoint-md: 768px;
+  --dx-breakpoint-lg: 1024px;
+  --dx-breakpoint-xl: 1280px;
+  --dx-breakpoint-2xl: 1536px;
+
+  /* Container max-widths — breakpoint와 동일값 */
+  --dx-container-sm: 640px;
+  --dx-container-md: 768px;
+  --dx-container-lg: 1024px;
+  --dx-container-xl: 1280px;
+  --dx-container-2xl: 1536px;
+
+  /* Grid */
+  --dx-grid-columns: 12; /* unitless. `repeat(var(--dx-grid-columns), 1fr)` 형태로만 사용. */
+  --dx-grid-gutter: var(--dx-space-6); /* 24px, 기존 spacing 토큰 재사용 */
 }
