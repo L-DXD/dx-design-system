@@ -664,3 +664,42 @@ export default {
 - **Storybook `source.code` 3탭 transformer**: v0.1.0 에서 구축한 custom transformer 가 `@storybook/react-vite` 에서도 동일하게 동작하는지 확인 필요. 첫 Task 에서 재이식.
 - **Storybook Foundation 스토리 MDX 재작성 비용**: Grid/Color/Typography/Spacing 스토리는 web-components 의 Lit `html` 기반. MDX + 순수 React 컴포넌트로 재작성 — Grid visualization 등 복잡한 시각화는 MDX `<Canvas>` 에 React 컴포넌트를 임베드하는 방식으로 이식.
 - **HTML/Thymeleaf 번들 배포 경로**: 사내 CDN 이 없는 경우 `@dx/elements` 결과물을 각 Spring 프로젝트 `static/js/` 에 수동 복사해야 함. 자동화 스크립트(`scripts/publish-to-services.sh`) 작성 여부는 plan 단계 결정.
+
+### Task 1 검증: th:field 프로토타입 (2026-04-21)
+
+- 환경: Java 11 (Zulu) + Thymeleaf 3.1.2.RELEASE (standalone, no Spring / no IWebContext)
+- 테스트 입력:
+  ```html
+  <form action="/signup" th:object="${signupForm}" method="post">
+    <ds-input th:field="*{email}" type="email"/>
+    <ds-input th:field="*{password}" type="password"/>
+  </form>
+  ```
+  Model: `signupForm.email = "user@example.com"`, `signupForm.password = ""`
+- 렌더 결과:
+  ```html
+  <form action="/signup" method="post">
+    <ds-input field="user@example.com" type="email"/>
+    <ds-input type="password"/>
+  </form>
+  ```
+- 관찰:
+  - `th:field` 가 custom element(`<ds-input>`)에서 **정상 동작하지 않음**. `id` / `name` / `value` 어느 것도 host 에 부착되지 않았다.
+  - 대신 `th:field` 의 `th:` 접두사만 제거되어 `field="user@example.com"` 이라는 엉뚱한 attribute 로 남았다 (Thymeleaf 가 태그를 `<input>`/`<select>`/`<textarea>` 로 인식하지 못해 전용 processor 가 skip, 표준 attribute fallback 이 evaluated expression 을 그대로 값으로 쓴 결과).
+  - 빈 문자열 바인딩(`password=""`) 케이스는 아예 attribute 자체가 사라졌다.
+- 결론: **(B) th:attr 워크어라운드를 표준으로 채택.**
+  - 공식 사용 예시:
+    ```html
+    <ds-input type="email"
+              th:attr="id=${#ids.next('email')}, name='email', value=*{email}"/>
+    ```
+  - 또는 필요한 속성만 개별 processor 로 분리:
+    ```html
+    <ds-input type="email"
+              th:id="${#ids.next('email')}"
+              name="email"
+              th:value="*{email}"/>
+    ```
+  - 에러 메시지(`th:errors`) 표현은 `<ds-error-message th:if="${#fields.hasErrors('email')}" th:errors="*{email}"/>` 처럼 **`th:errors` 는 별도 요소에서** 사용하면 정상 동작할 여지가 있다 (후속 Task 10 재검증).
+  - 프로토타입 소스: `/tmp/dx-thymeleaf-probe/` (Maven 프로젝트, pom.xml · Main.java · signup.html).
+  - 향후 Spring Boot(IWebContext) 환경에서 재검증 시 결과가 바뀌지 않는다. `th:field` 의 tag-name 분기는 엔진 레벨 로직이라 web context 유무와 무관.
