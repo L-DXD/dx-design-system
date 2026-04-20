@@ -12,7 +12,7 @@
     "@dx/react": "workspace:*",
     "@dx/styles": "workspace:*",
     "clsx": "^2",
-    "next": "^15",
+    "next": "^16",
     "react": "^19",
     "react-dom": "^19",
     "tailwind-merge": "^3"
