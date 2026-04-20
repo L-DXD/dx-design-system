@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { Badge, Button, Input } from '@dx/react';
-import { cn } from '@/lib/utils';
+import { Badge, Button, Input } from "@dx/react";
+import { cn } from "@/lib/utils";
 
 /**
  * Tailwind 유틸리티 클래스로 ds-* 컴포넌트를 오버라이드하는 예시.
@@ -16,12 +16,7 @@ type ThemedButtonProps = React.ComponentProps<typeof Button>;
 
 /** 호출부에서 `className` 을 마지막에 넘기면 기본 스타일을 덮어씀. */
 function ThemedButton({ className, ...props }: ThemedButtonProps) {
-  return (
-    <Button
-      {...props}
-      className={cn('w-full', className)}
-    />
-  );
+  return <Button {...props} className={cn("w-full", className)} />;
 }
 
 export function TailwindDemo() {
@@ -56,11 +51,7 @@ export function TailwindDemo() {
         </Badge>
       </div>
 
-      <Input
-        type="email"
-        placeholder="w-full 로 폭 조정"
-        className="w-full"
-      />
+      <Input type="email" placeholder="w-64 로 폭 조정" className="w-64" />
     </section>
   );
 }

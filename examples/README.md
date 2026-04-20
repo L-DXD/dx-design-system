@@ -25,14 +25,24 @@ pnpm --filter @dx/react build
 
 Spring Boot 는 JVM + Gradle 로 빌드되므로 pnpm workspace 에 편입되지 않습니다. `examples/thymeleaf-spring/` 은 **템플릿·정적 리소스만** 제공하고, 소비자 서비스가 각자의 Spring Boot 프로젝트에 복사해 쓰는 방식입니다.
 
-## Tailwind 오버라이드 패턴
+## 각 예제의 3섹션 구성
 
-3개 예제 모두 `ds-*` 컴포넌트에 Tailwind 유틸리티 클래스를 걸어 호스트 레벨 속성(width, margin, grid, shadow 등)을 오버라이드하는 섹션을 포함합니다. 환경별 관용:
+프레임워크별 사용법을 **기본 / Token 오버라이드 / Tailwind 오버라이드** 세 단계로 보여줍니다.
 
-| 환경 | 유틸 | 조건부 class 처리 |
+| 섹션 | 목적 | 환경별 구현 |
 | --- | --- | --- |
-| React | `className={cn("w-full mt-2", className)}` (clsx + tailwind-merge) | `cn("base", condition && "extra")` |
-| Thymeleaf | `class="w-full"` / `th:class="\|w-full ${size}\|"` | `th:classappend="${cond} ? 'extra'"` |
-| vanilla HTML | `class="w-full"` | `element.classList.toggle('rounded-full')` |
+| **1. 기본** | DX 기본 토큰 그대로 사용 | 모두 동일 |
+| **2. Token 오버라이드** | 서비스 브랜드 컬러로 `--dx-color-*` semantic 토큰 재선언 | React: 인라인 `style={{ '--dx-color-primary': '#8b5cf6' }}`  ·  Thymeleaf/HTML: `<style>` 의 `.brand-purple { --dx-color-primary: ... }` + `class="brand-purple"` |
+| **3. Tailwind 오버라이드** | 호스트 레벨 유틸(width/margin/shadow) | React: `className={cn("w-full", className)}`  ·  Thymeleaf: `class` / `th:classappend` / `th:class="\|...\|"`  ·  HTML: `class` / `element.classList.toggle()` |
 
-ds-* 의 **내부 Shadow DOM** 요소(예: `<ds-input>` 내부 `<input>`) 를 건드리려면 Tailwind 유틸 대신 Shoelace 가 제공하는 `::part()` CSS 선택자나 `--dx-*` 토큰 오버라이드를 사용해야 합니다. 자세한 내용은 루트 README 의 "테마 커스터마이징" 섹션 참고.
+### Token 오버라이드 주의
+
+- `--dx-color-primary` 같은 **semantic** 토큰만 재선언. primitive 팔레트(`--dx-palette-*`) 는 DS 내부용.
+- 페이지 전체 재테마는 서비스 `theme.css` 에 `:root` 로 선언 후 `@dx/styles` 다음 순서로 로드.
+- 특정 구역만 재테마는 wrapper 에 class / 인라인 style 로 스코프 제한.
+- 다크모드도 따로 오버라이드하려면 `.dark .brand-xxx { ... }` 로 분기.
+
+### Tailwind 오버라이드 주의
+
+- `ds-*` 호스트 요소에 class 를 걸면 호스트 레벨 속성(width, margin, position, display, shadow) 은 바로 반영.
+- **내부 Shadow DOM** 요소(`<ds-input>` 내부 `<input>`) 는 Tailwind 로 못 건드림. Shoelace 의 `::part()` 또는 `--dx-*` 토큰 오버라이드 사용.
