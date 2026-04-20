@@ -10,14 +10,34 @@
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
+    },
+    "./styles/button": {
+      "types": "./dist/styles/button.d.ts",
+      "import": "./dist/styles/button.js"
+    },
+    "./styles/badge": {
+      "types": "./dist/styles/badge.d.ts",
+      "import": "./dist/styles/badge.js"
+    },
+    "./styles/input": {
+      "types": "./dist/styles/input.d.ts",
+      "import": "./dist/styles/input.js"
+    },
+    "./styles/label": {
+      "types": "./dist/styles/label.d.ts",
+      "import": "./dist/styles/label.js"
+    },
+    "./styles/form-field": {
+      "types": "./dist/styles/form-field.d.ts",
+      "import": "./dist/styles/form-field.js"
     }
   },
   "files": [
     "dist"
   ],
   "scripts": {
-    "build": "tsup src/index.ts --format esm --dts --clean",
-    "dev": "tsup src/index.ts --format esm --dts --watch"
+    "build": "tsup",
+    "dev": "tsup --watch"
   },
   "dependencies": {
     "@radix-ui/react-checkbox": "^1",

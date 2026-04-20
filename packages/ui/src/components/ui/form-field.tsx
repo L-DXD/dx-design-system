@@ -1,5 +1,11 @@
 import * as React from 'react';
 import { cn } from '../../lib/utils';
+import {
+  formFieldVerticalClasses,
+  formFieldHorizontalClasses,
+  helperTextClasses,
+  errorMessageClasses,
+} from './form-field.styles';
 
 /**
  * Compound 컨테이너. `<Label>`, `<Input>`, `<HelperText>`, `<ErrorMessage>` 를 자식으로 조립.
@@ -15,8 +21,7 @@ export const FormField = React.forwardRef<HTMLDivElement, FormFieldProps>(
       ref={ref}
       data-orientation={orientation}
       className={cn(
-        'flex gap-2',
-        orientation === 'vertical' ? 'flex-col' : 'flex-row items-center',
+        orientation === 'vertical' ? formFieldVerticalClasses : formFieldHorizontalClasses,
         className,
       )}
       {...props}
@@ -27,7 +32,7 @@ FormField.displayName = 'FormField';
 
 export const HelperText = React.forwardRef<HTMLParagraphElement, React.HTMLAttributes<HTMLParagraphElement>>(
   ({ className, ...props }, ref) => (
-    <p ref={ref} className={cn('text-xs text-muted-foreground', className)} {...props} />
+    <p ref={ref} className={cn(helperTextClasses, className)} {...props} />
   ),
 );
 HelperText.displayName = 'HelperText';
@@ -39,7 +44,7 @@ export const ErrorMessage = React.forwardRef<HTMLParagraphElement, React.HTMLAtt
       <p
         ref={ref}
         role="alert"
-        className={cn('text-xs font-medium text-destructive', className)}
+        className={cn(errorMessageClasses, className)}
         {...props}
       >
         {children}
