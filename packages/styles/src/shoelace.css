@@ -7,7 +7,8 @@
  *      WCAG AA (소형·굵은 글씨 4.5:1)에 미달. 700 tone으로 한 단계 어둡게 재지정.
  */
 ds-badge[variant='primary']::part(base) {
-  background-color: var(--dx-palette-primary-700);
+  /* semantic 경유로 브랜드 오버라이드가 badge 에도 반영되도록 (primary-hover = primary-700 shade) */
+  background-color: var(--dx-color-primary-hover);
 }
 ds-badge[variant='success']::part(base) {
   background-color: var(--dx-palette-success-700);
