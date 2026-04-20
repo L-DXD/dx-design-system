@@ -54,7 +54,7 @@ export default function Page() {
             <Label htmlFor="terms">이용약관에 동의합니다</Label>
           </FormField>
 
-          <Button type="submit" variant="primary">가입하기</Button>
+          <Button type="submit">가입하기</Button>
         </form>
       </section>
 
