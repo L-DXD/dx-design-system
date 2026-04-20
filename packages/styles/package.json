@@ -6,12 +6,13 @@
   "main": "dist/styles.css",
   "exports": {
     ".": "./dist/styles.css",
+    "./utilities": "./dist/styles-utilities.css",
     "./tokens": "./src/tokens.css",
     "./theme": "./src/themes/default.css"
   },
   "files": ["dist", "src"],
   "scripts": {
-    "build": "postcss src/themes/default.css -o dist/styles.css",
+    "build": "postcss src/themes/default.css -o dist/styles.css && postcss src/themes/utilities.css -o dist/styles-utilities.css",
     "dev": "postcss src/themes/default.css -o dist/styles.css --watch"
   },
   "devDependencies": {
