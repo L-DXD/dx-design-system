@@ -16,6 +16,7 @@ const preview: Preview = {
     options: {
       storySort: {
         order: [
+          'Introduction',
           'Foundation',
           'Atoms',
           'Molecules',

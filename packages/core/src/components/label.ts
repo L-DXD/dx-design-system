@@ -23,6 +23,11 @@ export class DsLabel extends ReactiveElement {
 
   #markerEl: HTMLSpanElement | null = null;
 
+  // Light DOM 렌더. 기본 Shadow DOM 에 slot 이 없어 children(라벨 텍스트)이 사라지는 것을 방지.
+  protected override createRenderRoot(): HTMLElement {
+    return this;
+  }
+
   override connectedCallback(): void {
     super.connectedCallback();
     this.addEventListener('click', this.#handleClick);

@@ -19,4 +19,10 @@ import { customElement, property } from 'lit/decorators.js';
 export class DsFormField extends ReactiveElement {
   @property({ reflect: true })
   orientation: 'vertical' | 'horizontal' = 'vertical';
+
+  // Light DOM 렌더. ReactiveElement 기본값은 빈 Shadow DOM 생성이라
+  // slot 없이 children 을 받는 Compound 컨테이너에서는 children 이 사라진다.
+  protected override createRenderRoot(): HTMLElement {
+    return this;
+  }
 }

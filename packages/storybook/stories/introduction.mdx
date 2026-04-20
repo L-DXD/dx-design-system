@@ -1,0 +1,186 @@
+import { Meta } from '@storybook/blocks';
+
+<Meta title="Introduction" />
+
+# DX Design System
+
+Shoelace(Lit Web Components) 기반 멀티 플랫폼 디자인 시스템.
+React / Next.js · Thymeleaf · 순수 HTML 환경에서 **동일한 `ds-*` 컴포넌트**를 쓰도록 설계되었습니다.
+
+이 페이지는 DS 의 **레이어 구조**와 **상속 흐름**을 한눈에 보여줍니다.
+
+---
+
+## 레이어 구조 (Atomic Design + Design Tokens)
+
+아래로 내려올수록 위 레이어에 **의존**합니다. 반대 방향 참조는 금지입니다.
+
+<div style={{
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '0.75rem',
+  margin: '1.5rem 0',
+  fontFamily: 'var(--dx-font-family-sans, system-ui)',
+}}>
+  {[
+    {
+      label: '0. Tokens (Primitive)',
+      desc: '팔레트·스케일의 원시 값. 의미 없음. 내부 구현용.',
+      example: '--dx-palette-blue-600, --dx-scale-4',
+      bg: 'oklch(0.97 0.01 250)',
+    },
+    {
+      label: '0. Tokens (Semantic)',
+      desc: '역할 기반 alias. UI 는 이 레이어만 참조.',
+      example: '--dx-color-primary, --dx-space-2',
+      bg: 'oklch(0.93 0.03 250)',
+    },
+    {
+      label: '0. Foundation',
+      desc: 'Color · Typography · Spacing & Grid · Icons. 시각 기반 규칙.',
+      example: 'Colors, Grid, Icons, Spacing, Typography 스토리',
+      bg: 'oklch(0.88 0.05 250)',
+    },
+    {
+      label: '1. Atoms',
+      desc: '더 이상 쪼갤 수 없는 최소 단위. Semantic 토큰만 사용.',
+      example: 'ds-button, ds-input, ds-checkbox, ds-badge',
+      bg: 'oklch(0.83 0.07 250)',
+    },
+    {
+      label: '2. Molecules',
+      desc: 'Atoms 를 조립한 Compound 컴포넌트.',
+      example: 'ds-form-field (= ds-label + ds-input + ds-helper-text)',
+      bg: 'oklch(0.78 0.09 250)',
+    },
+    {
+      label: '3. Organisms',
+      desc: '여러 Molecules 가 모여 한 섹션을 이룸.',
+      example: 'Header, Nav, Card List, Footer',
+      bg: 'oklch(0.72 0.10 250)',
+    },
+    {
+      label: '4. Templates',
+      desc: '레이아웃 와이어프레임. 콘텐츠 없음.',
+      example: 'Dashboard, Form, Detail Layout',
+      bg: 'oklch(0.66 0.12 250)',
+    },
+    {
+      label: '5. Pages',
+      desc: '실제 콘텐츠가 적용된 완성 화면. 테스트 대상.',
+      example: '로그인 페이지, 사용자 상세, 대시보드',
+      bg: 'oklch(0.60 0.13 250)',
+    },
+  ].map((layer) => (
+    <div
+      key={layer.label}
+      style={{
+        padding: '0.9rem 1.1rem',
+        background: layer.bg,
+        borderRadius: '0.5rem',
+        color: 'oklch(0.2 0.02 250)',
+      }}
+    >
+      <div style={{ fontWeight: 600, fontSize: '0.95rem' }}>{layer.label}</div>
+      <div style={{ fontSize: '0.85rem', opacity: 0.85, marginTop: '0.25rem' }}>
+        {layer.desc}
+      </div>
+      <div
+        style={{
+          fontSize: '0.78rem',
+          fontFamily: 'ui-monospace, SFMono-Regular, monospace',
+          marginTop: '0.35rem',
+          opacity: 0.75,
+        }}
+      >
+        예) {layer.example}
+      </div>
+    </div>
+  ))}
+</div>
+
+---
+
+## 각 레이어 정의
+
+### 0-a. Tokens
+
+DS 의 **단일 진실 공급원(SSOT)**. `@dx/styles/src/tokens.css` 에 CSS Variables 로 선언됩니다.
+
+- **Primitive 토큰** — `--dx-palette-*`, `--dx-scale-*` 등. 원시 값 자체. UI 에서 직접 쓰지 **않습니다**.
+- **Semantic 토큰** — `--dx-color-primary`, `--dx-space-2` 등. 역할(role) 기반 alias.
+  컴포넌트/서비스는 **오직 semantic 토큰만** 참조합니다. 다크모드·테마 오버라이드가 자동 적용됩니다.
+
+### 0-b. Foundation
+
+토큰으로부터 파생된 **시각 기반 규칙 집합**. Storybook 의 `Foundation/*` 스토리로 시각화되어 있습니다.
+
+- **Color** — Semantic color 토큰 매핑과 대비(Contrast) 가이드.
+- **Typography** — Font family · size · weight · line-height 스케일.
+- **Spacing & Grid** — 간격 스케일, 컬럼/거터 규칙.
+- **Icons** — Lucide 아이콘 세트, `ds-icon` 사용법.
+
+### 1. Atoms
+
+쪼갤 수 없는 최소 UI 단위. 내부적으로 Shoelace 웹 컴포넌트를 `ds-*` 접두사로 래핑합니다.
+
+- 스타일 prop(`variant`·`color`·`size`) 대신 **semantic variant**(`primary`·`destructive`·`success`)만 허용.
+- Shoelace 내장 `label`·`help-text`·`error` attribute 는 **쓰지 않습니다** (Compound 로 분리).
+- 이벤트는 `connectedCallback` 에서 `sl-*` → `ds-*` 로 재디스패치합니다.
+
+### 2. Molecules
+
+Atoms 를 **조립(Compound)** 하여 의미 있는 작은 단위를 만드는 레이어.
+
+- `<ds-form-field>` 안에 `<ds-label>` + `<ds-input>` + `<ds-helper-text>` + `<ds-error-message>` 를 **별도 컴포넌트로** 조립.
+- `label`·`helperText`·`error` 같은 prop 을 추가하지 **않습니다**. → shadcn/Radix 식 Compound 패턴.
+
+### 3. Organisms · 4. Templates · 5. Pages
+
+v0.1 에서는 Foundation · Atoms · Molecules 에 집중합니다. Organisms 이상은 실제 서비스 접목 단계에서 쌓입니다.
+
+---
+
+## 상속(Inheritance) 과정
+
+아래는 한 픽셀이 **팔레트 → 토큰 → 컴포넌트 → 페이지**로 전파되는 실제 경로입니다.
+
+```
+@dx/styles/tokens.css
+  --dx-palette-blue-600: oklch(0.55 0.22 260)     ← Primitive
+          │
+          ▼
+  --dx-color-primary: var(--dx-palette-blue-600)  ← Semantic
+          │
+          ▼
+@dx/core/components/button.ts
+  ds-button[variant="primary"]
+    background: var(--dx-color-primary)           ← Atom 이 Semantic 만 참조
+          │
+          ▼
+@dx/core/components/form-field.ts
+  <ds-form-field>
+    <ds-label>이메일</ds-label>
+    <ds-input />
+    <ds-button variant="primary">제출</ds-button>  ← Molecule 이 Atoms 조립
+  </ds-form-field>
+          │
+          ▼
+서비스 Page (React / Thymeleaf)
+  <FormField>…</FormField>                         ← Page 가 Molecules 사용
+```
+
+**핵심 규칙**
+
+1. 아래 레이어는 **바로 위 레이어만** 참조합니다. (Atom → Semantic ✅, Atom → Primitive ❌)
+2. 서비스 테마 오버라이드는 **Semantic 토큰만** 재정의합니다. Primitive 는 건드리지 않습니다.
+3. 컴포넌트 API 변경은 반드시 **4탭 코드 뷰**(HTML/CSS · WC · Thymeleaf · React) 스토리를 갱신합니다.
+
+---
+
+## 어디서부터 볼까요?
+
+- 토큰·시각 규칙이 궁금하다면 → 왼쪽 **Foundation** 섹션.
+- 개별 컴포넌트 사용법이 궁금하다면 → **Atoms** → 해당 컴포넌트 → **Code** 탭 4탭 스니펫.
+- 조립 예시가 궁금하다면 → **Molecules / FormField** 의 variation 들.
+- 접근성 결과는 각 스토리의 **Accessibility** 탭에서 확인할 수 있습니다 (violations 0개 유지).

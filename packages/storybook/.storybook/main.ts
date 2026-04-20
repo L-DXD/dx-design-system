@@ -7,7 +7,7 @@ import { resolve } from 'path';
  * Interactions 다음 자리에 오도록 한다. a11y 는 맨 뒤.
  */
 const config: StorybookConfig = {
-  stories: ['../stories/**/*.stories.ts'],
+  stories: ['../stories/**/*.mdx', '../stories/**/*.stories.ts'],
   addons: [
     '@storybook/addon-essentials',
     resolve(__dirname, 'addons/code-tabs/preset'),
