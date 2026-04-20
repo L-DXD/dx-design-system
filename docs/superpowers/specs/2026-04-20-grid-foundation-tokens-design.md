@@ -69,6 +69,10 @@ Molecules/Organisms(`FormField`, `Card List`, `Header`) 단계로 진입하면 "
 
 ### 1. 토큰 정의 — `packages/styles/src/tokens.css`
 
+`tokens.css` 는 현재 1. PRIMITIVE COLOR / 2. SEMANTIC / 3. TYPOGRAPHY / 4. SPACING / 5. RADIUS / 6. SHADOW / 7. Z-INDEX 의 번호 섹션으로 구성되어 있다. Grid 토큰은 **8. BREAKPOINTS / CONTAINER / GRID** 신규 섹션으로 기존 `:root` 블록 말미(`Z-INDEX` 다음) 에 추가한다. 계층은 **primitive** 성격(원시 px 값) 이지만 `--dx-palette-*` 류의 primitive/semantic 이원화는 불필요하므로 `--dx-breakpoint-*` / `--dx-container-*` 단일 네임스페이스로 둔다.
+
+Grid 토큰은 **테마 독립적**(라이트/다크 모두 동일) 이므로 `.dark` / `prefers-color-scheme: dark` 오버라이드 블록에는 포함하지 않는다. 서비스가 Breakpoint 를 재정의하려면 자기 `theme.css` 에서 `:root` 스코프로 덮어쓴다.
+
 ```css
 /* Breakpoints — Tailwind v4 기본값과 정렬.
    CSS @media 에서 직접 쓸 수 없음. 사용 가이드는 grid.stories.ts 참고. */
@@ -92,11 +96,13 @@ Molecules/Organisms(`FormField`, `Card List`, `Header`) 단계로 진입하면 "
 
 ### 2. Storybook 스토리 — `packages/storybook/stories/foundation/grid.stories.ts`
 
-`title: 'Foundation/Grid'`, `tags: ['autodocs']`. 4개 stories:
+`title: 'Foundation/Grid'`, `tags: ['autodocs']`. 구성 패턴은 기존 `spacing.stories.ts` 를 그대로 따른다: 파일 최상단에 `BREAKPOINTS`, `CONTAINERS`, `GRID_USAGE` 같은 타입 있는 데이터 배열을 선언하고 각 `Story` 의 `render` 함수에서 `.map()` 으로 HTML 을 생성한다. 설명이 필요한 스토리는 `spacing.stories.ts:88-95` 의 `UsageGuide` 처럼 `parameters.docs.description.story` 에 한글 설명을 붙인다.
+
+4개 stories:
 
 #### 2.1 Breakpoints
 
-5단계 표: 이름 · px · 대표 디바이스 · 사용 예시.
+`spacing.stories.ts` 의 `SPACING_USAGE` 테이블 형식을 따라 `BREAKPOINTS` 데이터 배열 기반으로 렌더링:
 
 | 이름 | 값 | 대표 디바이스 | 용도 |
 | --- | --- | --- | --- |
@@ -108,7 +114,7 @@ Molecules/Organisms(`FormField`, `Card List`, `Header`) 단계로 진입하면 "
 
 #### 2.2 Container
 
-각 container max-width 를 회색 배경 + 중앙 정렬 박스로 시각화. 현재 뷰포트 크기에 따라 어느 container 가 활성화되는지 live 표시 (Storybook viewport toolbar 연동).
+각 container max-width 를 회색 배경 + 중앙 정렬 박스로 **정적**으로 나란히 시각화 (sm → 2xl 다섯 개 박스). 기존 Foundation 스토리와의 밀도 일관성을 위해 resize observer / matchMedia 같은 동적 감지 로직은 넣지 않는다. 독자는 Storybook viewport toolbar 로 직접 크기를 바꾸며 비교한다.
 
 #### 2.3 Grid Overlay
 
@@ -136,11 +142,15 @@ Molecules/Organisms(`FormField`, `Card List`, `Header`) 단계로 진입하면 "
 
 ```ts
 // 3. JavaScript 참조 — 런타임 조회가 필요할 때
-const md = parseInt(
-  getComputedStyle(document.documentElement)
-    .getPropertyValue('--dx-breakpoint-md'),
-);
-if (window.innerWidth >= md) { /* ... */ }
+// NOTE: 브라우저 전용. Next.js RSC / Thymeleaf 서버 렌더 중에는 window 가 없으므로
+// typeof window !== 'undefined' 가드 또는 useEffect 내부에서만 호출할 것.
+if (typeof window !== 'undefined') {
+  const md = parseInt(
+    getComputedStyle(document.documentElement)
+      .getPropertyValue('--dx-breakpoint-md'),
+  );
+  if (window.innerWidth >= md) { /* ... */ }
+}
 ```
 
 ### 3. 문서 동기화
@@ -182,6 +192,7 @@ if (window.innerWidth >= md) { /* ... */ }
 
 ## 리스크 및 미결 이슈
 
+- **SSR 환경에서 JS 참조 사용:** Usage Guide 3번 예시(`getComputedStyle`) 는 브라우저 전용이다. Next.js RSC / Thymeleaf 서버 렌더 중에 호출되면 ReferenceError. 스토리 주석과 README 에 반드시 가드 패턴 명시.
 - **사내 실사용 뷰포트와의 불일치 가능성:** 사내 B2C 서비스가 실제로 쓰는 디바이스 폭이 Tailwind 기본값과 맞지 않을 수 있다. 이 경우 서비스별 `theme.css` 에서 `--dx-breakpoint-*` 를 재정의할 수 있도록 설계되어 있어 리스크는 제한적.
 - **CSS 변수 `@media` 한계 혼동:** 소비자가 `@media (min-width: var(--dx-breakpoint-md))` 를 시도하면 실패한다. Storybook Usage Guide 스토리와 README 문단에서 **반드시** 명시적으로 경고.
 
