@@ -1,6 +1,7 @@
 import SlSelect from '@shoelace-style/shoelace/dist/components/select/select.component.js';
 import { remapEvents } from '../utils/remap-events.js';
 import { syncAccessibleName } from '../utils/sync-accessible-name.js';
+import { defineElement } from '../utils/define-element.js';
 
 export class DsSelect extends SlSelect {
   #disposeA11y?: () => void;
@@ -10,8 +11,8 @@ export class DsSelect extends SlSelect {
     remapEvents(this, { 'sl-change': 'ds-change' });
   }
 
-  firstUpdated(changed: Map<string, unknown>) {
-    super.firstUpdated?.(changed);
+  firstUpdated(changedProperties: Parameters<SlSelect['firstUpdated']>[0]) {
+    super.firstUpdated(changedProperties);
     this.#disposeA11y = syncAccessibleName(this, 'input.select__display-input');
   }
 
@@ -20,6 +21,4 @@ export class DsSelect extends SlSelect {
     this.#disposeA11y?.();
   }
 }
-if (!customElements.get('ds-select')) {
-  customElements.define('ds-select', DsSelect);
-}
+defineElement("ds-select", DsSelect);

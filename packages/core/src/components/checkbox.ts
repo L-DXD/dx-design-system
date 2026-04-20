@@ -1,6 +1,7 @@
 import SlCheckbox from '@shoelace-style/shoelace/dist/components/checkbox/checkbox.component.js';
 import { remapEvents } from '../utils/remap-events.js';
 import { syncAccessibleName } from '../utils/sync-accessible-name.js';
+import { defineElement } from '../utils/define-element.js';
 
 export class DsCheckbox extends SlCheckbox {
   #disposeA11y?: () => void;
@@ -10,8 +11,8 @@ export class DsCheckbox extends SlCheckbox {
     remapEvents(this, { 'sl-change': 'ds-change' });
   }
 
-  firstUpdated(changed: Map<string, unknown>) {
-    super.firstUpdated?.(changed);
+  firstUpdated() {
+    super.firstUpdated?.();
     this.#disposeA11y = syncAccessibleName(this, 'input[type="checkbox"]');
   }
 
@@ -20,6 +21,4 @@ export class DsCheckbox extends SlCheckbox {
     this.#disposeA11y?.();
   }
 }
-if (!customElements.get('ds-checkbox')) {
-  customElements.define('ds-checkbox', DsCheckbox);
-}
+defineElement("ds-checkbox", DsCheckbox);

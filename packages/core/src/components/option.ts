@@ -1,6 +1,5 @@
 import SlOption from '@shoelace-style/shoelace/dist/components/option/option.component.js';
+import { defineElement } from '../utils/define-element.js';
 
 export class DsOption extends SlOption {}
-if (!customElements.get('ds-option')) {
-  customElements.define('ds-option', DsOption);
-}
+defineElement("ds-option", DsOption);

@@ -21,7 +21,7 @@ const meta: Meta = {
       html: `<span class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold">태그</span>`,
       wc: `<ds-chip variant="primary">태그</ds-chip>\n<ds-chip removable>삭제 가능</ds-chip>`,
       thymeleaf: `<ds-chip th:each="tag : \${tags}" th:attr="variant=\${tag.variant}" removable>[[#{\${tag.label}}]]</ds-chip>`,
-      react: `import { Chip } from '@dx/react';\n\n<Chip variant="primary">태그</Chip>\n<Chip removable onDsRemove={() => handleRemove()}>삭제 가능</Chip>`,
+      react: `import { Chip } from '@dx/react';\n\n<Chip variant="primary">태그</Chip>\n<Chip removable onRemove={() => handleRemove()}>삭제 가능</Chip>`,
     },
   },
 };

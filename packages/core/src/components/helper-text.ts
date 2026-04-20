@@ -1,3 +1,4 @@
+import { defineElement } from '../utils/define-element.js';
 /**
  * <ds-helper-text>회사 이메일을 입력하세요</ds-helper-text>
  *
@@ -6,6 +7,4 @@
  */
 export class DsHelperText extends HTMLElement {}
 
-if (!customElements.get('ds-helper-text')) {
-  customElements.define('ds-helper-text', DsHelperText);
-}
+defineElement("ds-helper-text", DsHelperText);

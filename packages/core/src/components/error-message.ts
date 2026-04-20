@@ -1,3 +1,4 @@
+import { defineElement } from '../utils/define-element.js';
 /**
  * <ds-error-message>유효하지 않은 이메일입니다</ds-error-message>
  *
@@ -12,6 +13,4 @@ export class DsErrorMessage extends HTMLElement {
   }
 }
 
-if (!customElements.get('ds-error-message')) {
-  customElements.define('ds-error-message', DsErrorMessage);
-}
+defineElement("ds-error-message", DsErrorMessage);

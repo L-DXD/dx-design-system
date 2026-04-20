@@ -29,7 +29,7 @@ const meta: Meta = {
       react: `import { FormField, Toggle, Label } from '@dx/react';
 
 <FormField orientation="horizontal">
-  <Toggle id="notify" checked={enabled} onDsChange={(e) => setEnabled(e.target.checked)} />
+  <Toggle id="notify" checked={enabled} onChange={(e) => setEnabled(e.target.checked)} />
   <Label htmlFor="notify">알림 수신</Label>
 </FormField>`,
     },

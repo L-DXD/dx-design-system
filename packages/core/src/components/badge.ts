@@ -1,6 +1,5 @@
 import SlBadge from '@shoelace-style/shoelace/dist/components/badge/badge.component.js';
+import { defineElement } from '../utils/define-element.js';
 
 export class DsBadge extends SlBadge {}
-if (!customElements.get('ds-badge')) {
-  customElements.define('ds-badge', DsBadge);
-}
+defineElement("ds-badge", DsBadge);

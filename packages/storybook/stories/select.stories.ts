@@ -40,7 +40,7 @@ const meta: Meta = {
 
 <FormField>
   <Label htmlFor="country">국가</Label>
-  <Select id="country" placeholder="선택하세요" onDsChange={(e) => setValue(e.detail)}>
+  <Select id="country" placeholder="선택하세요" onChange={(e) => setValue(e.detail)}>
     <Option value="kr">대한민국</Option>
     <Option value="us">United States</Option>
   </Select>

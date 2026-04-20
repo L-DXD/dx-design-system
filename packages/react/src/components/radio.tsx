@@ -1,10 +1,23 @@
 import React from 'react';
 import { createComponent } from '@lit/react';
-import { DsRadio } from '@dx/core';
+import { DsRadio as DsRadioElement } from '@dx/core';
 
-export const Radio = createComponent({
+export interface RadioProps
+  extends Omit<React.ComponentProps<'input'>, 'type' | 'size' | 'onBlur' | 'onFocus' | 'ref'> {
+  size?: 'small' | 'medium' | 'large';
+  onBlur?: (e: FocusEvent) => void;
+  onFocus?: (e: FocusEvent) => void;
+  ref?: React.Ref<DsRadioElement>;
+}
+
+const RadioComponent = createComponent({
   tagName: 'ds-radio',
-  elementClass: DsRadio,
+  elementClass: DsRadioElement as unknown as { new (): HTMLElement },
   react: React,
-  events: {},
+  events: {
+    onBlur: 'sl-blur',
+    onFocus: 'sl-focus',
+  },
 });
+
+export const Radio = RadioComponent as unknown as React.FC<RadioProps>;

@@ -29,7 +29,7 @@ const meta: Meta = {
       react: `import { FormField, Checkbox, Label } from '@dx/react';
 
 <FormField orientation="horizontal">
-  <Checkbox id="terms" onDsChange={(e) => setAgreed(e.target.checked)} />
+  <Checkbox id="terms" onChange={(e) => setAgreed(e.target.checked)} />
   <Label htmlFor="terms">이용약관에 동의합니다</Label>
 </FormField>`,
     },

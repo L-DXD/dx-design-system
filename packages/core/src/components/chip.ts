@@ -1,5 +1,6 @@
 import SlTag from '@shoelace-style/shoelace/dist/components/tag/tag.component.js';
 import { remapEvents } from '../utils/remap-events.js';
+import { defineElement } from '../utils/define-element.js';
 
 export class DsChip extends SlTag {
   connectedCallback() {
@@ -7,6 +8,4 @@ export class DsChip extends SlTag {
     remapEvents(this, { 'sl-remove': 'ds-remove' });
   }
 }
-if (!customElements.get('ds-chip')) {
-  customElements.define('ds-chip', DsChip);
-}
+defineElement("ds-chip", DsChip);

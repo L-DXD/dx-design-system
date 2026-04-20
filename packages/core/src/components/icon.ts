@@ -1,6 +1,7 @@
 import { LitElement, nothing, type PropertyValues } from 'lit';
 import { property } from 'lit/decorators.js';
 import type { IconNode } from 'lucide';
+import { defineElement } from '../utils/define-element.js';
 
 /**
  * kebab-case → PascalCase 변환
@@ -90,6 +91,4 @@ export class DsIcon extends LitElement {
   }
 }
 
-if (!customElements.get('ds-icon')) {
-  customElements.define('ds-icon', DsIcon);
-}
+defineElement("ds-icon", DsIcon);

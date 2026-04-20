@@ -41,7 +41,7 @@ const meta: Meta = {
 
 <FormField>
   <Label>배송 방법</Label>
-  <RadioGroup name="shipping" value={shipping} onDsChange={(e) => setShipping(e.detail)}>
+  <RadioGroup name="shipping" value={shipping} onChange={(e) => setShipping(e.detail)}>
     <Radio value="standard">일반 배송</Radio>
     <Radio value="express">빠른 배송</Radio>
   </RadioGroup>

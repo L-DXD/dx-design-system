@@ -1,6 +1,7 @@
 import SlInput from '@shoelace-style/shoelace/dist/components/input/input.component.js';
 import { remapEvents } from '../utils/remap-events.js';
 import { syncAccessibleName } from '../utils/sync-accessible-name.js';
+import { defineElement } from '../utils/define-element.js';
 
 export class DsInput extends SlInput {
   #disposeA11y?: () => void;
@@ -10,8 +11,8 @@ export class DsInput extends SlInput {
     remapEvents(this, { 'sl-input': 'ds-input', 'sl-change': 'ds-change' });
   }
 
-  firstUpdated(changed: Map<string, unknown>) {
-    super.firstUpdated?.(changed);
+  firstUpdated() {
+    super.firstUpdated?.();
     this.#disposeA11y = syncAccessibleName(this, 'input.input__control');
   }
 
@@ -20,6 +21,4 @@ export class DsInput extends SlInput {
     this.#disposeA11y?.();
   }
 }
-if (!customElements.get('ds-input')) {
-  customElements.define('ds-input', DsInput);
-}
+defineElement("ds-input", DsInput);

@@ -1,5 +1,6 @@
 import SlRadioGroup from '@shoelace-style/shoelace/dist/components/radio-group/radio-group.component.js';
 import { remapEvents } from '../utils/remap-events.js';
+import { defineElement } from '../utils/define-element.js';
 
 export class DsRadioGroup extends SlRadioGroup {
   connectedCallback() {
@@ -7,6 +8,4 @@ export class DsRadioGroup extends SlRadioGroup {
     remapEvents(this, { 'sl-change': 'ds-change' });
   }
 }
-if (!customElements.get('ds-radio-group')) {
-  customElements.define('ds-radio-group', DsRadioGroup);
-}
+defineElement("ds-radio-group", DsRadioGroup);

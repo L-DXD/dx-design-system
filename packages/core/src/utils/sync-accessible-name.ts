@@ -10,8 +10,16 @@
  *       내부 컨트롤에 `aria-label`로 반영하고, 빈 `title=""` 잔존 속성을 제거한다.
  *       라벨 텍스트가 바뀌면 MutationObserver로 재동기화한다.
  */
+// host 타입을 느슨하게 둔다(structural). Shoelace 자체 .d.ts 의 일부 속성(예: autocorrect)이
+// DOM 표준과 충돌하는 문제가 있어, 엄격한 `HTMLElement` 로 받으면 Shoelace 기반 컴포넌트를
+// 넘길 때 타입 오류가 난다. 이 함수는 getAttribute / shadowRoot 만 요구한다.
+type AccessibleHost = Element & {
+  shadowRoot: ShadowRoot | null;
+  getAttribute(name: string): string | null;
+};
+
 export function syncAccessibleName(
-  host: HTMLElement & { shadowRoot: ShadowRoot | null },
+  host: AccessibleHost,
   internalSelector: string,
 ): () => void {
   let observer: MutationObserver | null = null;
