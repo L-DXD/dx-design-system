@@ -6,11 +6,17 @@
     <title>DX Design System — Vanilla HTML 예제</title>
 
     <!--
-      로컬 워크스페이스의 @dx/core 번들과 @dx/styles CSS 를 상대 경로로 참조한다.
+      로컬 워크스페이스의 @dx/core 번들과 @dx/styles CSS 를 상대 경로로 참조.
       실제 서비스에서는 CDN(jsdelivr) 또는 빌드 산출물을 서빙하는 경로로 교체.
     -->
     <script type="module" src="../../packages/core/dist/dx-core.bundle.js"></script>
     <link rel="stylesheet" href="../../packages/styles/dist/styles.css" />
+
+    <!--
+      Tailwind CSS (선택): 소비자 마크업에 유틸리티 클래스를 쓰고 싶을 때 로드.
+      프로덕션에서는 build 단계에서 빌드된 CSS 로 교체 권장 (Play CDN 은 런타임 컴파일).
+    -->
+    <script src="https://cdn.tailwindcss.com"></script>
 
     <style>
       body {
@@ -88,6 +94,35 @@
           <ds-button type="submit" variant="primary">가입하기</ds-button>
         </form>
       </section>
+
+      <!--
+        Tailwind 오버라이드 섹션.
+        ds-* 호스트 요소에 class 를 걸면 호스트 레벨 속성(width/margin/grid 등)이 바로 반영된다.
+        HTML 에서는 cn() 같은 유틸이 필요 없고, 조건부 class 는 JS 로 toggle 하면 된다.
+      -->
+      <section>
+        <h2>Tailwind 오버라이드</h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <ds-button variant="primary">기본</ds-button>
+          <ds-button variant="primary" class="w-full">w-full</ds-button>
+          <ds-button variant="primary" class="w-full mt-2 shadow-lg">w-full mt-2 shadow-lg</ds-button>
+          <ds-button variant="primary" class="w-auto ml-auto">w-auto ml-auto</ds-button>
+        </div>
+
+        <div class="flex gap-2 flex-wrap">
+          <ds-badge variant="primary" class="text-base">큰 뱃지</ds-badge>
+          <ds-badge variant="success" class="px-4 py-1">넓은 패딩</ds-badge>
+        </div>
+
+        <ds-input type="email" placeholder="w-full" class="w-full"></ds-input>
+
+        <!--
+          조건부 class 는 vanilla JS 로 토글.
+          React 의 cn() 같은 관용 유틸 대신 classList.toggle / classList.add 사용.
+        -->
+        <ds-button id="conditional-btn" variant="primary" class="w-full">클릭하면 rounded-full 이 추가됨</ds-button>
+      </section>
     </main>
 
     <script type="module">
@@ -102,6 +137,11 @@
         e.preventDefault();
         const email = document.getElementById('email').value;
         alert(`가입 요청: ${email}`);
+      });
+
+      // 조건부 Tailwind class — React cn() 대응.
+      document.getElementById('conditional-btn').addEventListener('click', (e) => {
+        e.currentTarget.classList.toggle('rounded-full');
       });
     </script>
   </body>

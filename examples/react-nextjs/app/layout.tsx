@@ -1,4 +1,4 @@
-import '@dx/styles';
+import './globals.css';
 import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
 
@@ -10,15 +10,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="ko">
-      <body
-        style={{
-          fontFamily: 'var(--dx-font-sans)',
-          color: 'var(--dx-color-foreground)',
-          background: 'var(--dx-color-background)',
-          margin: 0,
-          padding: '48px 24px',
-        }}
-      >
+      <body className="font-sans text-[color:var(--dx-color-foreground)] bg-[color:var(--dx-color-background)] m-0 p-12">
         {children}
       </body>
     </html>

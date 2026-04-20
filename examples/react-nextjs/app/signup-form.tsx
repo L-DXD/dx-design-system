@@ -1,13 +1,20 @@
-'use client';
+"use client";
 
 // Web Component 는 브라우저 API 에 의존하므로, 이 리프 컴포넌트만 클라이언트로 분리한다.
 // page.tsx / layout.tsx 는 RSC 로 그대로 서버 렌더링된다.
 
-import { Button, Checkbox, FormField, HelperText, Input, Label } from '@dx/react';
-import { useState } from 'react';
+import {
+  Button,
+  Checkbox,
+  FormField,
+  HelperText,
+  Input,
+  Label,
+} from "@dx/react";
+import { useState } from "react";
 
 export function SignupForm() {
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState("");
 
   return (
     <form
@@ -15,7 +22,7 @@ export function SignupForm() {
         e.preventDefault();
         alert(`가입 요청: ${email}`);
       }}
-      style={{ display: 'flex', flexDirection: 'column', gap: 16 }}
+      style={{ display: "flex", flexDirection: "column", gap: 16 }}
     >
       <FormField>
         <Label htmlFor="email" required>

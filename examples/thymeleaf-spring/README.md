@@ -34,3 +34,27 @@ cp packages/styles/dist/styles.css \
 - **폼 바인딩:** `th:field="*{email}"` 을 `<ds-input>` 에 그대로 쓸 수 있다. Shoelace 의 form participation 이 `ds-*` 래퍼에서도 보존된다.
 - **에러 표시:** `<ds-error-message th:if="${#fields.hasErrors('email')}" th:errors="*{email}">` 로 Spring validation 결과를 바로 렌더.
 - **다크모드:** `<html data-theme="...">` 에 유저 설정을 Thymeleaf 로 주입하면 서버 렌더 시점에 다크/라이트를 결정할 수 있다.
+
+## Tailwind 오버라이드 패턴 (선택)
+
+React 는 `cn()` (clsx + tailwind-merge) 유틸로 class 를 병합하지만, Thymeleaf 는 **서버 사이드 속성 조립** 으로 동일한 효과를 낸다. `signup.html` 하단 섹션에 4가지 패턴 예시가 있다.
+
+| 패턴 | Thymeleaf 문법 | 용도 |
+| --- | --- | --- |
+| 정적 | `class="w-full"` | 항상 적용되는 class |
+| 조건부 추가 | `th:classappend="${hasError} ? 'ring-2 ring-red-500'"` | 기본 class 를 유지하면서 조건부로 추가 |
+| 동적 (리터럴 치환) | `th:class="\|w-full ${size}\|"` | Model 값을 class 문자열에 끼워넣기 |
+| 동적 (삼항) | `th:variant="${isPrimary ? 'primary' : 'secondary'}"` | ds-* variant attribute 자체를 분기 |
+
+### Spring Boot 에서 Tailwind 빌드
+
+Tailwind 유틸 클래스를 쓰려면 Spring Boot 프로젝트에서 Tailwind CSS 를 별도로 빌드해 `static/css/tailwind.css` 에 떨어뜨린다. `@dx/styles` 는 DS 내부 스타일만 포함하므로 소비자 마크업의 `md:grid-cols-12` 같은 유틸은 소비자 프로젝트가 직접 생성해야 한다.
+
+```js
+// <project>/tailwind.config.js
+export default {
+  content: ['./src/main/resources/templates/**/*.html'],
+};
+```
+
+`layout.html` 에서 `<link rel="stylesheet" th:href="@{/css/tailwind.css}" />` 로 로드.

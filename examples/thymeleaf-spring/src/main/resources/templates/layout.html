@@ -13,6 +13,13 @@
     <link rel="stylesheet" th:href="@{/css/styles.css}" />
     <script type="module" th:src="@{/js/dx-core.bundle.js}"></script>
 
+    <!--
+      (선택) Tailwind 유틸 클래스를 소비자 마크업에 쓰려면 별도 빌드해서 로드.
+      @dx/styles 는 DS 내부 스타일만 포함하므로 `md:grid-cols-12` 같은 유틸은 자체 빌드 필요.
+      빌드 설정은 README "Spring Boot 에서 Tailwind 빌드" 섹션 참고.
+    -->
+    <link rel="stylesheet" th:href="@{/css/tailwind.css}" />
+
     <style>
       body {
         font-family: var(--dx-font-sans);

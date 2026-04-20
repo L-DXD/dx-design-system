@@ -36,6 +36,42 @@
 
         <ds-button type="submit" variant="primary">가입하기</ds-button>
       </form>
+
+      <!--
+        Tailwind 오버라이드 섹션.
+        Thymeleaf 는 서버 렌더이므로 class 는 속성 문자열로 조립한다.
+        - 정적: class="w-full"
+        - 조건부: th:classappend="${condition} ? 'rounded-full shadow-lg'"
+        - 완전 동적: th:class="|base-class ${variant}|"  (Thymeleaf literal substitution)
+        React 의 cn() 같은 병합 로직이 필요하면 Thymeleaf #strings.concat 또는 유틸 객체 사용.
+      -->
+      <section style="margin-top: 32px;">
+        <h3>Tailwind 오버라이드</h3>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- 정적 class -->
+          <ds-button variant="primary" class="w-full">w-full</ds-button>
+
+          <!-- 조건부: hasError 면 추가 클래스 -->
+          <ds-button variant="primary"
+                     class="w-full"
+                     th:classappend="${hasError} ? 'ring-2 ring-red-500'">
+            조건부 class
+          </ds-button>
+
+          <!-- Model 값으로 class 동적 구성 -->
+          <ds-button variant="primary"
+                     th:class="|w-full ${buttonSize ?: 'mt-0'}|">
+            동적 class
+          </ds-button>
+
+          <!-- Shoelace variant 도 Model 에서 -->
+          <ds-button th:variant="${isPrimary ? 'primary' : 'secondary'}"
+                     class="w-auto ml-auto">
+            동적 variant
+          </ds-button>
+        </div>
+      </section>
     </div>
   </body>
 </html>
