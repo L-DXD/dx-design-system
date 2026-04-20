@@ -271,30 +271,70 @@ export const buttonSizeClasses = {
 
 #### 3.3 `base-element.ts`
 
+##### 3.3.1 Attribute 분류 규칙 (명시적 allow/deny)
+
+소비자가 host 에 쓴 attribute 는 다음 세 부류로 분리 처리:
+
+| 부류 | 동작 | 대상 attribute | 근거 |
+|---|---|---|---|
+| **Move to inner** (host 에서 제거, inner 에 부착) | 내부 native control 에 필요 | `id`, `name`, `value`, `type`, `placeholder`, `disabled`, `required`, `readonly`, `min`, `max`, `step`, `pattern`, `minlength`, `maxlength`, `autocomplete`, `autofocus`, `inputmode`, `spellcheck`, `form`, `for`, `aria-*`, `role` | `<label for>` 가 inner 의 `id` 를 찾아야 하고, form submit 이 inner 의 `name/value` 를 직렬화해야 함. `aria-*`/`role` 은 focusable control 에 있어야 screen reader 가 정확히 읽음. |
+| **Keep on host** | host 에만 유지 | `style`, `data-*`, `tabindex` (host 자체가 focusable 하지 않음) | 인라인 스타일은 레이아웃 투명화(`display:contents`) 와 함께 host 의 부가 hook 으로 유지. `data-*` 는 app 수준 메타 — host 가 DOM 식별자로 남아야 함. |
+| **Merge** | 병합 후 inner 에 부착, host 에서 제거 | `class` | `tailwind-merge` 로 baseClasses 와 충돌 해결. |
+
+Event listener (`onclick=""`) 는 host 에 남겨둠: 사용자 JS 가 `document.querySelector('ds-button#save').addEventListener(...)` 로 구독할 때 이벤트가 inner 에서 bubble-up 해 host 에서 잡히므로 기능상 문제 없음.
+
+##### 3.3.2 Reactive attribute 처리 (observedAttributes)
+
+`class` / `variant` / `size` / `disabled` 등이 동적으로 바뀔 수 있으므로 (Alpine.js, HTMX, 사용자 JS) `attributeChangedCallback` 구현 필수. 변경 시 inner 의 해당 attribute 를 갱신하고 `class` 의 경우 재병합.
+
+##### 3.3.3 구현
+
 ```ts
 import { twMerge } from 'tailwind-merge';
 
+/**
+ * host 에서 inner 로 MOVE 할 attribute 목록.
+ * Control-level attribute (form participation / a11y) 은 inner 에 있어야 한다.
+ */
+const MOVE_TO_INNER = new Set([
+  'id', 'name', 'value', 'type', 'placeholder',
+  'disabled', 'required', 'readonly',
+  'min', 'max', 'step', 'pattern', 'minlength', 'maxlength',
+  'autocomplete', 'autofocus', 'inputmode', 'spellcheck',
+  'form', 'for', 'role',
+]);
+
+const isAriaAttr = (name: string) => name.startsWith('aria-');
+
 export abstract class DxElement extends HTMLElement {
+  protected inner?: HTMLElement;
   protected abstract getBaseClasses(): string;
-  protected abstract renderInternal(mergedClass: string): HTMLElement;
+  protected abstract renderInternal(): HTMLElement;
 
-  /**
-   * host 자체는 레이아웃에 영향을 주지 않도록 투명화.
-   * 내부 native 요소만 실제 렌더.
-   */
+  static get observedAttributes() {
+    return ['class', 'variant', 'size', 'disabled', 'required', 'value', 'placeholder'];
+  }
+
   connectedCallback() {
+    if (this.inner) return; // 이미 upgrade 된 경우(중복 connect) skip
+
+    const inner = this.renderInternal();
+    this.inner = inner;
+
+    // 1. class 병합
     const userClass = this.getAttribute('class') ?? '';
-    const merged = twMerge(this.getBaseClasses(), userClass);
+    inner.className = twMerge(this.getBaseClasses(), userClass);
+    this.removeAttribute('class');
 
-    const inner = this.renderInternal(merged);
-
-    // class 외의 attribute 를 전부 내부 요소에 forward (type, placeholder, name, value, disabled, ...)
+    // 2. control-level attribute 를 inner 로 이동
     for (const name of this.getAttributeNames()) {
-      if (name === 'class') continue;
-      inner.setAttribute(name, this.getAttribute(name) ?? '');
+      if (MOVE_TO_INNER.has(name) || isAriaAttr(name)) {
+        inner.setAttribute(name, this.getAttribute(name) ?? '');
+        this.removeAttribute(name);
+      }
     }
 
-    // 텍스트 콘텐츠도 inner 로 이동 (slot 역할)
+    // 3. 텍스트 콘텐츠를 inner 로 이동 (slot 역할)
     while (this.firstChild) {
       inner.appendChild(this.firstChild);
     }
@@ -302,6 +342,49 @@ export abstract class DxElement extends HTMLElement {
     this.appendChild(inner);
     this.style.display = 'contents';
   }
+
+  attributeChangedCallback(name: string, _old: string | null, value: string | null) {
+    if (!this.inner) return;
+    if (name === 'class') {
+      this.inner.className = twMerge(this.getBaseClasses(), value ?? '');
+      this.removeAttribute('class');
+      return;
+    }
+    if (name === 'variant' || name === 'size') {
+      // 재조립 (baseClasses 가 variant/size 에 의존)
+      this.inner.className = twMerge(this.getBaseClasses(), '');
+      return;
+    }
+    // MOVE_TO_INNER 부류는 inner 갱신
+    if (MOVE_TO_INNER.has(name) || isAriaAttr(name)) {
+      if (value === null) this.inner.removeAttribute(name);
+      else this.inner.setAttribute(name, value);
+      this.removeAttribute(name);
+    }
+  }
+}
+```
+
+##### 3.3.4 파싱 타이밍 이슈 대응
+
+Custom element upgrade 가 parser 의 children 파싱보다 먼저 발생하면 `this.firstChild` 가 `null`. 두 가지 방어책 병행:
+
+1. **Script 로드 위치 가이드**: `<script type="module" src="...dx-elements.js" defer>` — `defer` 가 document parsing 완료 후 실행을 보장.
+2. **DCL 시점 정의**: `@dx/elements/index.ts` 에서 `DOMContentLoaded` 이후에 `customElements.define(...)` 을 실행하여 모든 HTML 이 이미 parsed 된 상태에서 upgrade 되도록 강제.
+
+```ts
+// packages/elements/src/index.ts
+import { DsButton, DsInput, DsLabel, DsBadge, DsHelperText, DsErrorMessage } from './ds-*';
+
+const register = () => {
+  if (!customElements.get('ds-button')) customElements.define('ds-button', DsButton);
+  // ... 나머지
+};
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', register, { once: true });
+} else {
+  register();
 }
 ```
 
@@ -400,21 +483,86 @@ export const Primary: Story = {
 
 ## 성공 기준
 
-- [ ] `packages/elements` 신규 생성, 6 atoms + base-element 구현
+- [ ] `packages/elements` 신규 생성, 6 atoms + base-element (MOVE_TO_INNER allow-list, observedAttributes, DOMContentLoaded 지연 등록 포함) 구현
 - [ ] `@dx/ui` Button / Badge 에 `tertiary` variant 추가
-- [ ] `@dx/styles/src/tokens.css` shadcn 형태로 재작성, 과도한 토큰 제거
+- [ ] `@dx/ui` 의 baseClasses 를 별도 파일(`*.styles.ts`) 로 추출하고 sub-path export
+- [ ] `@dx/elements` 가 `@dx/ui/styles/*` sub-path 로 baseClasses import 성공
+- [ ] `@dx/styles/src/tokens.css` shadcn 형태로 재작성 (primitive 팔레트 제거, 3브랜드 semantic)
+- [ ] `@dx/styles` 가 `dist/styles.css` (슬림) 와 `dist/styles-utilities.css` (safelist 기반 fat) 두 개 배포
 - [ ] `pnpm --filter @dx/styles build` + `@dx/ui build` + `@dx/elements build` 성공
-- [ ] `examples/react-nextjs` 빌드 성공, `primary/secondary/tertiary` 버튼 정상 렌더
-- [ ] `examples/vanilla-html/index.html` 브라우저에서 열어 `<ds-input class="px-5">` 이 실제 `<input>` 에 `px-5` 적용 확인
-- [ ] `examples/thymeleaf-spring/signup.html` 에 `<ds-input th:field="*{email}">` 형태가 form submit 가능한 마크업으로 서버 렌더
-- [ ] Storybook 빌드 성공, 각 컴포넌트 스토리에 React/Thymeleaf/HTML 3 탭 코드 확인
-- [ ] axe 스캔 violations 0 (Foundation + 모든 atom 스토리)
+- [ ] `@dx/elements` 번들 크기 < 50KB gzip (tailwind-merge 포함)
+- [ ] **Thymeleaf 프로토타입 검증**: Spring Boot 최소 세팅에서 `<ds-input th:field="*{email}">` 가 form submit 시 `email` 필드로 정상 전송되는지 확인 (구현 첫 Task)
+- [ ] `examples/react-nextjs` 빌드 성공, primary/secondary/tertiary 버튼 3개 모두 정상 렌더 + 다크모드 토글 동작
+- [ ] `examples/vanilla-html/index.html` 브라우저에서 열어 `<ds-input class="px-5">` 의 실제 `<input>` 이 padding-5 적용된 것을 DevTools 로 확인
+- [ ] `examples/thymeleaf-spring/` 템플릿이 위 프로토타입 검증 결과에 맞춰 `th:field` 또는 `th:attr` 로 작성됨
+- [ ] Storybook 빌드 성공, 각 컴포넌트 스토리에 React/Thymeleaf/HTML 3 탭 코드 표시 (custom source transformer v0.1.0 재이식)
+- [ ] axe 스캔 violations 0 (Foundation + 모든 atom 스토리 + FormField compound 스토리)
 - [ ] CLAUDE.md / README / architecture / contributing 4 문서 재작성 완료
+- [ ] 각 `examples/*/README.md` 에 "Tailwind class override 가 동작하는 조건" 안내표 포함
+
+## Tailwind class override 가 동작하는 조건 (중요)
+
+`<ds-input class="px-5">` 의 `px-5` 는 "Tailwind 가 생성한 CSS 유틸 class" 이다. 해당 class 의 CSS 정의가 소비자 페이지에 로드되어 있어야 실제 스타일이 적용됨. 런타임 `twMerge` 는 class **문자열 병합** 만 하고 CSS 를 만들어내지는 않는다.
+
+### 7.1 소비자 환경별 요구사항
+
+#### React (Next.js) — Tailwind 빌드 있음
+사용자 프로젝트에 Tailwind 가 이미 설정되어 있음 (`@dx/styles` 와 `@tailwindcss/postcss` 로드). `globals.css` 에 소비자 마크업을 스캔하도록 `@source` 디렉티브 추가만 필요:
+
+```css
+@import '@dx/styles/theme';
+@source "./**/*.{tsx,ts,jsx,js}";
+```
+
+React 환경은 `<ds-*>` 를 쓰지 않으므로 HTML override 고민 자체가 불필요 (shadcn React 컴포넌트는 Light DOM 네이티브 → class 자동 반영).
+
+#### Thymeleaf / HTML — 두 가지 경로
+
+**경로 A (권장): 소비자 프로젝트에 Tailwind 빌드 구성**
+
+```js
+// tailwind.config.js (Spring Boot 프로젝트 내)
+export default {
+  content: ['./src/main/resources/templates/**/*.html'],
+};
+```
+
+빌드 산출물 `tailwind.css` 를 `static/css/` 에 놓고 layout 에서 로드. 이 때 `@dx/styles` 의 토큰 CSS 도 `@import '@dx/styles'` 로 포함. 자기 템플릿의 `px-5`, `bg-primary/90` 같은 class 가 JIT 로 컴파일되어 CSS 에 포함됨.
+
+**경로 B (Tailwind 빌드 없는 서비스용): `@dx/styles` 의 "fat" utility 번들 로드**
+
+`@dx/styles` 가 두 개의 CSS 를 배포:
+
+- `dist/styles.css` — 슬림 (토큰 + `@dx/ui` / `@dx/elements` 에서 실제 사용한 class 만)
+- `dist/styles-utilities.css` — **넓은 유틸리티 세트** (모든 spacing/color/layout/typography Tailwind 유틸을 safelist 로 강제 생성)
+
+경로 B 를 택한 서비스는 `<link rel="stylesheet" href=".../styles-utilities.css">` 하나만 로드하면 `class="px-5 mt-4 bg-primary/90"` 같은 임의 class 가 그대로 동작. 대가는 CSS 크기 증가 (예상 100~200KB gzip). 이 번들은 자주 쓰이는 유틸만 safelist 해 크기를 관리 (`px-0` ~ `px-96`, 모든 `bg-*/{opacity}` 등).
+
+#### 3가지 경로 요약
+
+| 환경 | CSS 로드 방법 | 자유도 |
+|---|---|---|
+| React | 프로젝트 Tailwind + `@source` | 무제한 |
+| Thymeleaf (빌드 O) | 프로젝트 Tailwind + content glob | 무제한 |
+| Thymeleaf (빌드 X) | `@dx/styles/dist/styles-utilities.css` | safelist 범위 |
+| HTML | 동일 | 동일 |
+
+### 7.2 문서 의무
+
+각 `examples/*/README.md` 와 루트 `README.md` 에 위 "3가지 경로 요약표" 를 포함해 소비자가 오해하지 않도록 **필수 안내**.
 
 ## 리스크 및 미결 이슈
 
-- **tailwind-merge 런타임 비용**: `@dx/elements` 번들에 tailwind-merge 포함 시 ~35KB gzip 증가. 페이지 로드에 영향 가능. HTML/Thymeleaf 는 보통 캐시 가능하므로 실질 영향은 제한적이지만, 모니터링 필요.
-- **Thymeleaf `th:field` 호환성**: 현재 가정은 Thymeleaf 가 `<ds-input>` 을 일반 custom element 로 취급해 `th:field` 가 `name`/`value` 로 확장됨. 실제 Spring Boot 환경에서 검증 필요 — 안 되면 `th:attr="name=${...}, value=${...}"` 로 우회 가이드.
-- **baseClasses 파일 import 경로**: `@dx/ui/components/ui/button.styles` 같은 sub-path export 가 tsup 번들 + TypeScript resolution 양쪽에서 동작하도록 `package.json` `exports` 를 신중히 구성해야 함.
-- **Storybook 마이그레이션 중 v0.1.0 Foundation 스토리 재활용 범위**: Grid/Color/Typography/Spacing 스토리는 web-components 용. MDX 로 재작성하는 것이 가장 빠를 것으로 보이나, 시각화 수준이 떨어질 수 있음.
-- **HTML/Thymeleaf 번들 배포 경로**: 사내 CDN 이 없는 경우 `pnpm --filter @dx/elements build` 결과물을 각 Spring 프로젝트 `static/js/` 에 수동 복사해야 함. 자동화 스크립트 필요 여부 검토.
+- **`th:field` 호환성 사전 검증 필요**: Thymeleaf 의 `th:field` 프로세서는 태그 이름을 보고 `<input>`/`<select>`/`<textarea>` 전략을 선택. `<ds-input>` 은 알려진 form tag 가 아니므로 `id`/`name`/`value` attribute 를 host 에 부착만 하고 종료할 가능성 큼. 구현 단계 첫 Task 에서 프로토타입으로 검증:
+  1. 최소한의 Spring Boot + Thymeleaf 세팅으로 `<ds-input th:field="*{email}">` 렌더 결과 확인
+  2. 정상 동작 시 (host 에 `id/name/value` 가 부착되면 우리 forwarding 이 처리) 그대로 진행
+  3. 예상 밖 동작(에러·누락) 시 `th:attr="id=${...}, name=${...}, value=*{email}"` 워크어라운드를 공식 가이드로 전환.
+- **`baseClasses` 파일 sub-path export 전략**: `@dx/ui/components/ui/button.styles` 를 양쪽 패키지(`@dx/ui`, `@dx/elements`) 가 import 해야 함. 다음 설정으로 고정:
+  - `packages/ui/package.json` `exports` 에 `"./styles/*": { "types": "./src/components/ui/*.styles.ts", "import": "./dist/styles/*.js" }` 추가.
+  - tsup 이 각 `*.styles.ts` 를 별 entry 로 빌드.
+  - `@dx/elements` 가 `import { buttonBaseClasses } from '@dx/ui/styles/button'` 형태로 import.
+- **Tailwind `styles-utilities.css` 크기 관리**: safelist 범위를 "자주 쓸 class" 로 제한 해야 함. 후보: `px-{0..8}`, `py-{0..8}`, `m*-{0..8}`, `w-{auto,full,fit,1/2,...}`, `grid-cols-{1..12}`, `gap-{0..8}`, 모든 `bg-{primary,secondary,...}/{10,20,...,90}`, 모든 `text-{primary,secondary,...}`, `rounded-{none,sm,md,lg,full}`, responsive prefix `{sm,md,lg}:`. 최종 리스트는 plan 단계에서 확정.
+- **tailwind-merge 런타임 비용**: `@dx/elements` 번들에 tailwind-merge 포함 시 ~35KB gzip 증가. 페이지 로드에 영향 가능. 측정 후 필요 시 tree-shakeable subset 검토.
+- **Storybook `source.code` 3탭 transformer**: v0.1.0 에서 구축한 custom transformer 가 `@storybook/react-vite` 에서도 동일하게 동작하는지 확인 필요. 첫 Task 에서 재이식.
+- **Storybook Foundation 스토리 MDX 재작성 비용**: Grid/Color/Typography/Spacing 스토리는 web-components 의 Lit `html` 기반. MDX + 순수 React 컴포넌트로 재작성 — Grid visualization 등 복잡한 시각화는 MDX `<Canvas>` 에 React 컴포넌트를 임베드하는 방식으로 이식.
+- **HTML/Thymeleaf 번들 배포 경로**: 사내 CDN 이 없는 경우 `@dx/elements` 결과물을 각 Spring 프로젝트 `static/js/` 에 수동 복사해야 함. 자동화 스크립트(`scripts/publish-to-services.sh`) 작성 여부는 plan 단계 결정.
