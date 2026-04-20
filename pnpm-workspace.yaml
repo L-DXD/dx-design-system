@@ -1,5 +1,5 @@
 packages:
   - 'packages/*'
   - 'examples/react-nextjs'
-  # examples/vanilla-html 은 package.json 없음 (정적 HTML, 빌드 산출물을 상대경로로 참조)
-  # examples/thymeleaf-spring 은 JVM 프로젝트로 pnpm 제외, 소비자 서비스가 각자 빌드
+  # examples/vanilla-html 은 package.json 없음 (정적 HTML)
+  # examples/thymeleaf-spring 은 JVM 프로젝트로 pnpm 제외

@@ -1,19 +1,18 @@
 {
   "name": "@dx/styles",
-  "version": "0.1.0",
-  "description": "DX Design System styles — CSS Variables + Tailwind + Shoelace theme",
+  "version": "0.2.0",
+  "description": "DX Design System styles — Tailwind v4 theme + semantic tokens",
+  "type": "module",
   "main": "dist/styles.css",
   "exports": {
     ".": "./dist/styles.css",
-    "./tokens": "./src/tokens.css"
+    "./tokens": "./src/tokens.css",
+    "./theme": "./src/themes/default.css"
   },
   "files": ["dist", "src"],
   "scripts": {
     "build": "postcss src/themes/default.css -o dist/styles.css",
     "dev": "postcss src/themes/default.css -o dist/styles.css --watch"
-  },
-  "dependencies": {
-    "@shoelace-style/shoelace": "^2"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

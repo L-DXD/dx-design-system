@@ -1,0 +1,44 @@
+{
+  "name": "@dx/ui",
+  "version": "0.2.0",
+  "description": "DX Design System — React components (shadcn/ui based)",
+  "type": "module",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsup src/index.ts --format esm --dts --clean",
+    "dev": "tsup src/index.ts --format esm --dts --watch"
+  },
+  "dependencies": {
+    "@radix-ui/react-checkbox": "^1",
+    "@radix-ui/react-label": "^2",
+    "@radix-ui/react-select": "^2",
+    "@radix-ui/react-slot": "^1",
+    "@radix-ui/react-switch": "^1",
+    "class-variance-authority": "^0.7",
+    "clsx": "^2",
+    "lucide-react": "^0.460",
+    "tailwind-merge": "^3"
+  },
+  "peerDependencies": {
+    "@dx/styles": "workspace:*",
+    "react": "^18 || ^19",
+    "react-dom": "^18 || ^19"
+  },
+  "devDependencies": {
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "react": "^19",
+    "react-dom": "^19",
+    "tsup": "^8",
+    "typescript": "^5"
+  }
+}

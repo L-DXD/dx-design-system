@@ -1,7 +1,36 @@
 @import 'tailwindcss';
 @import '../tokens.css';
-/* Shoelace 기본 테마(--sl-color-primary-600: sky-600 등) 를 먼저 로드한 뒤
-   base.css 의 DX semantic 브리지가 Shoelace 변수를 덮어쓰도록 순서를 유지한다. */
-@import '../shoelace.css';
-@import '../base.css';
-@import '../form.css';
+
+/*
+ * Tailwind v4 @theme — DX 토큰을 Tailwind 유틸(`bg-primary`, `text-foreground` 등) 로 노출.
+ * Tailwind 유틸에서 쓰려면 `--color-*` 네이밍 규칙을 따라야 한다.
+ * shadcn/ui 관례: semantic alias(primary/secondary/destructive/accent/muted/background/foreground)
+ */
+@theme inline {
+  --color-background: var(--dx-color-background);
+  --color-foreground: var(--dx-color-foreground);
+  --color-primary: var(--dx-color-primary);
+  --color-primary-foreground: var(--dx-color-primary-foreground);
+  --color-secondary: var(--dx-color-secondary);
+  --color-secondary-foreground: var(--dx-color-secondary-foreground);
+  --color-muted: var(--dx-color-muted);
+  --color-muted-foreground: var(--dx-color-muted-foreground);
+  --color-destructive: var(--dx-color-danger);
+  --color-destructive-foreground: var(--dx-color-danger-foreground);
+  --color-success: var(--dx-color-success);
+  --color-success-foreground: var(--dx-color-success-foreground);
+  --color-warning: var(--dx-color-warning);
+  --color-warning-foreground: var(--dx-color-warning-foreground);
+  --color-border: var(--dx-color-border);
+  --color-input: var(--dx-color-input);
+  --color-ring: var(--dx-color-ring);
+  --color-surface: var(--dx-color-surface);
+
+  --radius-sm: var(--dx-radius-sm);
+  --radius-md: var(--dx-radius);
+  --radius-lg: var(--dx-radius-lg);
+  --radius-xl: var(--dx-radius-xl);
+
+  --font-sans: var(--dx-font-sans);
+  --font-mono: var(--dx-font-mono);
+}

@@ -8,9 +8,8 @@
     "start": "next start -p 3001"
   },
   "dependencies": {
-    "@dx/core": "workspace:*",
-    "@dx/react": "workspace:*",
     "@dx/styles": "workspace:*",
+    "@dx/ui": "workspace:*",
     "clsx": "^2",
     "next": "^16",
     "react": "^19",

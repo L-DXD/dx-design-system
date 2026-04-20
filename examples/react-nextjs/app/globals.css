@@ -1,8 +1,6 @@
-/* DX Design System 스타일 (토큰 + 컴포넌트 테마) 먼저 로드 */
-@import '@dx/styles';
+/* Tailwind v4 + DX theme (Tailwind 는 theme 파일에서 @import) */
+@import '@dx/styles/theme';
 
-/* Tailwind 유틸 클래스 (소비자 마크업용) */
-@import 'tailwindcss';
-
-/* 소비자가 mark up 하는 파일만 스캔 — DX 내부 번들은 이미 @dx/styles 에 포함됨 */
+/* 소비자 마크업 스캔 경로 — 내 파일의 Tailwind class 를 전부 컴파일에 포함 */
 @source "./**/*.{tsx,ts,jsx,js}";
+@source "../../../packages/ui/src/**/*.{tsx,ts}";
