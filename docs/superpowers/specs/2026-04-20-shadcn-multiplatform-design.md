@@ -24,7 +24,7 @@ v0.2.0 에서는 shadcn/ui 기반으로 재출발한다. 핵심 관찰:
 
 ## 비목표 (Non-goals)
 
-- **복잡한 상호작용 컴포넌트 (Dialog/Select/Popover/Tooltip 등) 의 Light DOM WC 구현.** a11y·keyboard·focus trap 구현 비용이 높고 HTML/Thymeleaf 서비스별 요구가 상이. React 전용으로 두고 HTML/Thymeleaf 는 native 요소 또는 Alpine.js 사용.
+- **복잡한 상호작용 컴포넌트 대부분 (Select/Popover/Tooltip/DropdownMenu/Toast/Tabs) 의 Light DOM WC 구현.** a11y·keyboard·focus trap 비용이 높고 서비스별 요구가 상이. React 전용으로 두고 HTML/Thymeleaf 는 native 요소 또는 Alpine.js 사용. 단 **`ds-dialog` 한 개만 프로토타입**으로 구현해 Alpine.js 통합 가능성 검증 (§D6, §3.6).
 - **Primitive 팔레트 레이어.** shadcn 은 semantic 토큰 1개 값 + Tailwind opacity modifier(`primary/90`) 로 shade 처리. 11 shade primitive 불필요.
 - **커스텀 spacing/font-size/z-index/breakpoint 토큰.** Tailwind 기본 스케일로 충분. 현재 tokens.css 의 과도한 `--dx-space-*`, `--dx-font-size-*` 등 제거.
 - **Shoelace 와의 호환.** v0.1.0 코드는 `feat/v0.1.0-setup` 브랜치에 보존. v0.2.0 은 완전 재작성.
@@ -78,13 +78,24 @@ v0.2.0 에서는 shadcn/ui 기반으로 재출발한다. 핵심 관찰:
 - 11 shade 대신 Tailwind opacity modifier (`primary/90`, `primary/10`) 사용 → 브랜드 변경 시 1개 값만 바꾸면 자동 전파.
 - 네임스페이스 충돌은 shadcn 관례상 드물고, `@dx-` 접두사의 이점보다 표준 호환이 크다.
 
-### D6. 복잡한 컴포넌트는 React 전용
+### D6. 복잡한 컴포넌트는 React 전용 (단, `ds-dialog` 하나는 Alpine.js 프로토타입)
 
-**선택:** Dialog, Select, Popover, Tooltip, DropdownMenu, Toast, Tabs 등 Radix UI 의존 컴포넌트는 `@dx/ui` 에서만 제공. `@dx/elements` 에는 포함하지 않음.
+**선택:** Dialog, Select, Popover, Tooltip, DropdownMenu, Toast, Tabs 등 Radix UI 의존 컴포넌트는 기본적으로 `@dx/ui` 에서만 제공.
+
+**예외:** `@dx/elements` 에 **`ds-dialog` 하나만 프로토타입으로 포함**해 Alpine.js 기반 복잡한 컴포넌트의 가능성을 검증.
 
 **이유:**
-- a11y (focus trap, ARIA live, keyboard navigation) 가 복잡해서 Light DOM WC 로 재구현 시 Radix 수준의 품질 보장 어려움.
-- HTML/Thymeleaf 환경에서는 Alpine.js, HTMX, 또는 native `<select>` / `<details>` 로 대체하는 편이 현실적.
+- HTML/Thymeleaf 서비스가 실제로 Alpine.js 로 Dialog 수준 상호작용을 우아하게 만들 수 있는지 실측 필요.
+- 성공 시: 동일 패턴으로 Select/Popover/Toast 등을 단계적 확장 가능. 실패 시: 복잡한 컴포넌트는 React 전용으로 확정하고 소비자는 서비스별로 직접 구현.
+
+### D7. `ds-dialog` 는 native `<dialog>` + Alpine.js 지시어 조합
+
+**선택:** `ds-dialog` 내부를 native HTML5 `<dialog>` 로 렌더하되, 열림/닫힘 상태와 이벤트는 Alpine.js `x-data` / `x-show` / `@click.outside` / `@keydown.escape.window` 로 제어.
+
+**이유:**
+- **native `<dialog>`** 가 focus trap, ESC 키, `::backdrop`, `inert` 등 a11y 기본기를 이미 제공 → 우리가 재구현 부담 최소.
+- **Alpine.js** 가 상태 관리·선언적 DOM 바인딩·트랜지션을 작은 영향(~15KB gzip) 으로 제공. Thymeleaf 관용 (`x-data`, `x-show`) 에도 자연스럽게 통합.
+- 소비자 선택지: Alpine.js 를 별도 로드 (shadcn 이 React 에서 Radix 의존성을 로드하는 것과 동등한 비용).
 
 ### D7. Storybook 은 React + 3 탭 코드뷰
 
@@ -428,6 +439,92 @@ customElements.define('ds-button', DsButton);
 - IIFE 는 `window.DxElements` 글로벌에 노출 (디버깅 편의, 소비자가 직접 쓸 일은 없음).
 - tailwind-merge 는 번들에 포함. 예상 bundle size ~35KB gzip.
 
+#### 3.6 `ds-dialog` 프로토타입 (Alpine.js 통합)
+
+##### 소비 패턴
+
+```html
+<!-- 소비자 마크업 (HTML / Thymeleaf 공통) -->
+<!-- <head> 에 Alpine.js 와 @dx/elements 로드 -->
+<script defer src="https://unpkg.com/alpinejs"></script>
+<script type="module" defer src="/js/dx-elements.js"></script>
+
+<!-- 본문 -->
+<div x-data="{ open: false }">
+  <ds-button @click="open = true">가입 약관 보기</ds-button>
+
+  <ds-dialog x-show="open" @dialog-close="open = false">
+    <h2 class="text-lg font-semibold">이용약관</h2>
+    <p>...내용...</p>
+    <ds-button @click="open = false">닫기</ds-button>
+  </ds-dialog>
+</div>
+```
+
+##### 내부 구현
+
+```ts
+// packages/elements/src/ds-dialog.ts
+import { DxElement } from './base-element.js';
+
+const dialogBaseClasses =
+  'fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-50 grid w-full max-w-lg gap-4 ' +
+  'bg-background p-6 shadow-lg rounded-lg border ' +
+  'backdrop:bg-black/50 backdrop:backdrop-blur-sm';
+
+class DsDialog extends DxElement {
+  getBaseClasses() {
+    return dialogBaseClasses;
+  }
+
+  renderInternal(): HTMLElement {
+    const dialog = document.createElement('dialog');
+
+    // Alpine.js 'x-show' 가 true→false 전환 시 display:none 을 setAttribute 하므로
+    // dialog 태그의 open/close 를 그에 맞춰 동기화
+    const observer = new MutationObserver(() => {
+      const shouldOpen = this.style.display !== 'none' && !this.hasAttribute('hidden');
+      if (shouldOpen && !dialog.open) {
+        dialog.showModal();
+      } else if (!shouldOpen && dialog.open) {
+        dialog.close();
+      }
+    });
+    observer.observe(this, { attributes: true, attributeFilter: ['style', 'hidden'] });
+
+    // ESC / backdrop 클릭으로 닫히면 외부에 알림
+    dialog.addEventListener('close', () => {
+      this.dispatchEvent(
+        new CustomEvent('dialog-close', { bubbles: true, composed: true }),
+      );
+    });
+
+    // backdrop 클릭 감지 — dialog 영역 바깥 클릭
+    dialog.addEventListener('click', (e) => {
+      if (e.target === dialog) dialog.close(); // backdrop 영역
+    });
+
+    return dialog;
+  }
+}
+
+customElements.define('ds-dialog', DsDialog);
+```
+
+##### 소비자 책임
+
+- Alpine.js 를 `<script defer src="https://unpkg.com/alpinejs">` 등으로 로드.
+- `x-data` 스코프로 상태 관리.
+- `x-show` 로 열림 제어, `@dialog-close` 로 닫힘 수신.
+
+##### 실패 시나리오 (plan 단계 검증 대상)
+
+- Alpine.js `x-show` 가 `display:none` 으로 제어하는데, 동시에 우리 `display:contents` 와 충돌 → MutationObserver 로 맞춤 조정 필요 (위 구현).
+- native `<dialog>` 의 `showModal()` 과 Alpine transition 이 시각적으로 어긋남 → `x-transition` 대신 CSS `@starting-style` + `transition-behavior: allow-discrete` 사용.
+- Thymeleaf 서버 렌더 시 `x-data` initial state 를 Model 값에서 주입하려 할 때 string escape 주의.
+
+이 프로토타입이 위 3개 시나리오에서 수용 가능한 수준으로 동작하면 → 다른 복잡 컴포넌트(Select/Popover) 도 동일 패턴으로 확장. 그 전까지 Dialog 외 복잡 컴포넌트는 React 전용 유지.
+
 ### 4. Storybook 재구성
 
 - **프레임워크**: `@storybook/web-components-vite` → `@storybook/react-vite` 로 전환.
@@ -483,7 +580,7 @@ export const Primary: Story = {
 
 ## 성공 기준
 
-- [ ] `packages/elements` 신규 생성, 6 atoms + base-element (MOVE_TO_INNER allow-list, observedAttributes, DOMContentLoaded 지연 등록 포함) 구현
+- [ ] `packages/elements` 신규 생성, 6 atoms + `ds-dialog` 프로토타입 + base-element (MOVE_TO_INNER allow-list, observedAttributes, DOMContentLoaded 지연 등록 포함) 구현
 - [ ] `@dx/ui` Button / Badge 에 `tertiary` variant 추가
 - [ ] `@dx/ui` 의 baseClasses 를 별도 파일(`*.styles.ts`) 로 추출하고 sub-path export
 - [ ] `@dx/elements` 가 `@dx/ui/styles/*` sub-path 로 baseClasses import 성공
@@ -496,7 +593,8 @@ export const Primary: Story = {
 - [ ] `examples/vanilla-html/index.html` 브라우저에서 열어 `<ds-input class="px-5">` 의 실제 `<input>` 이 padding-5 적용된 것을 DevTools 로 확인
 - [ ] `examples/thymeleaf-spring/` 템플릿이 위 프로토타입 검증 결과에 맞춰 `th:field` 또는 `th:attr` 로 작성됨
 - [ ] Storybook 빌드 성공, 각 컴포넌트 스토리에 React/Thymeleaf/HTML 3 탭 코드 표시 (custom source transformer v0.1.0 재이식)
-- [ ] axe 스캔 violations 0 (Foundation + 모든 atom 스토리 + FormField compound 스토리)
+- [ ] axe 스캔 violations 0 (Foundation + 모든 atom 스토리 + FormField compound 스토리 + ds-dialog 프로토타입)
+- [ ] **`ds-dialog` 프로토타입 검증**: vanilla HTML + Alpine.js 페이지에서 열기/닫기/ESC/backdrop 클릭/focus trap 동작 확인. 성공 시 Alpine.js 통합 패턴 문서화, 실패 시 Dialog 도 React 전용으로 이동 + 스펙 갱신
 - [ ] CLAUDE.md / README / architecture / contributing 4 문서 재작성 완료
 - [ ] 각 `examples/*/README.md` 에 "Tailwind class override 가 동작하는 조건" 안내표 포함
 
