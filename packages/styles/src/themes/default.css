@@ -1,5 +1,7 @@
 @import 'tailwindcss';
 @import '../tokens.css';
-@import '../base.css';
+/* Shoelace 기본 테마(--sl-color-primary-600: sky-600 등) 를 먼저 로드한 뒤
+   base.css 의 DX semantic 브리지가 Shoelace 변수를 덮어쓰도록 순서를 유지한다. */
 @import '../shoelace.css';
+@import '../base.css';
 @import '../form.css';
