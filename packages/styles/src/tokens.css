@@ -1,371 +1,79 @@
 /**
- * DX Design System — Foundation Tokens
- *
- * 2단 구조:
- *  1. Primitive (원시) — 팔레트/스케일의 실제 값. 의미 없음.
- *  2. Semantic (의미) — 역할 기반 alias. UI에서는 semantic만 참조.
- *
- * 서비스 오버라이드 시에는 semantic 토큰을 재정의한다.
- * primitive는 DS 내부 구현용이므로 건드리지 않는다.
+ * DX Design System v0.2.0 — shadcn 표준 토큰.
+ * Primitive 팔레트 없음. Tailwind 기본 팔레트 + opacity modifier (primary/90) 로 shade 처리.
+ * 브랜드 3개: primary / secondary / tertiary.
  */
 
 :root {
-  /* ============================================================
-   *  1. PRIMITIVE — COLOR PALETTES
-   * ============================================================ */
+  /* Surface */
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.129 0.042 264.695);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.129 0.042 264.695);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.129 0.042 264.695);
 
-  /* Neutral (slate, OKLCH — Tailwind v4 호환) */
-  --dx-palette-neutral-0: oklch(1 0 0);                       /* #ffffff */
-  --dx-palette-neutral-50: oklch(0.984 0.003 247.858);
-  --dx-palette-neutral-100: oklch(0.968 0.007 247.896);
-  --dx-palette-neutral-200: oklch(0.929 0.013 255.508);
-  --dx-palette-neutral-300: oklch(0.869 0.022 252.894);
-  --dx-palette-neutral-400: oklch(0.704 0.04 256.788);
-  --dx-palette-neutral-500: oklch(0.554 0.046 257.417);
-  --dx-palette-neutral-600: oklch(0.446 0.043 257.281);
-  --dx-palette-neutral-700: oklch(0.372 0.044 257.287);
-  --dx-palette-neutral-800: oklch(0.279 0.041 260.031);
-  --dx-palette-neutral-900: oklch(0.208 0.042 265.755);
-  --dx-palette-neutral-950: oklch(0.129 0.042 264.695);
+  /* Brand — 3 tiers */
+  --primary: oklch(0.546 0.245 262.881);
+  --primary-foreground: oklch(1 0 0);
+  --secondary: oklch(0.279 0.041 260.031);
+  --secondary-foreground: oklch(1 0 0);
+  --tertiary: oklch(0.769 0.188 70.08);
+  --tertiary-foreground: oklch(0.129 0.042 264.695);
 
-  /* Primary (blue) */
-  --dx-palette-primary-50: oklch(0.97 0.014 254.604);
-  --dx-palette-primary-100: oklch(0.932 0.032 255.585);
-  --dx-palette-primary-200: oklch(0.882 0.059 254.128);
-  --dx-palette-primary-300: oklch(0.809 0.105 251.813);
-  --dx-palette-primary-400: oklch(0.707 0.165 254.624);
-  --dx-palette-primary-500: oklch(0.623 0.214 259.815);
-  --dx-palette-primary-600: oklch(0.546 0.245 262.881);
-  --dx-palette-primary-700: oklch(0.488 0.243 264.376);
-  --dx-palette-primary-800: oklch(0.424 0.199 265.638);
-  --dx-palette-primary-900: oklch(0.379 0.146 265.522);
-  --dx-palette-primary-950: oklch(0.282 0.091 267.935);
-
-  /* Success (green) */
-  --dx-palette-success-50: oklch(0.982 0.018 155.826);
-  --dx-palette-success-100: oklch(0.962 0.044 156.743);
-  --dx-palette-success-200: oklch(0.925 0.084 155.995);
-  --dx-palette-success-300: oklch(0.871 0.15 154.449);
-  --dx-palette-success-400: oklch(0.792 0.209 151.711);
-  --dx-palette-success-500: oklch(0.723 0.219 149.579);
-  --dx-palette-success-600: oklch(0.627 0.194 149.214);
-  --dx-palette-success-700: oklch(0.527 0.154 150.069);
-  --dx-palette-success-800: oklch(0.448 0.119 151.328);
-  --dx-palette-success-900: oklch(0.393 0.095 152.535);
-  --dx-palette-success-950: oklch(0.266 0.065 152.934);
-
-  /* Warning (amber) */
-  --dx-palette-warning-50: oklch(0.987 0.022 95.277);
-  --dx-palette-warning-100: oklch(0.962 0.059 95.617);
-  --dx-palette-warning-200: oklch(0.924 0.12 95.746);
-  --dx-palette-warning-300: oklch(0.879 0.169 91.605);
-  --dx-palette-warning-400: oklch(0.828 0.189 84.429);
-  --dx-palette-warning-500: oklch(0.769 0.188 70.08);
-  --dx-palette-warning-600: oklch(0.666 0.179 58.318);
-  --dx-palette-warning-700: oklch(0.555 0.163 48.998);
-  --dx-palette-warning-800: oklch(0.473 0.137 46.201);
-  --dx-palette-warning-900: oklch(0.414 0.112 45.904);
-  --dx-palette-warning-950: oklch(0.279 0.077 45.635);
-
-  /* Danger (red) */
-  --dx-palette-danger-50: oklch(0.971 0.013 17.38);
-  --dx-palette-danger-100: oklch(0.936 0.032 17.717);
-  --dx-palette-danger-200: oklch(0.885 0.062 18.334);
-  --dx-palette-danger-300: oklch(0.808 0.114 19.571);
-  --dx-palette-danger-400: oklch(0.704 0.191 22.216);
-  --dx-palette-danger-500: oklch(0.637 0.237 25.331);
-  --dx-palette-danger-600: oklch(0.577 0.245 27.325);
-  --dx-palette-danger-700: oklch(0.505 0.213 27.518);
-  --dx-palette-danger-800: oklch(0.444 0.177 26.899);
-  --dx-palette-danger-900: oklch(0.396 0.141 25.723);
-  --dx-palette-danger-950: oklch(0.258 0.092 26.042);
-
-  /* ============================================================
-   *  2. SEMANTIC — COLOR
-   *  서비스가 오버라이드할 때 이 레이어만 건드린다.
-   * ============================================================ */
-
-  /* Primary */
-  --dx-color-primary: var(--dx-palette-primary-600);
-  --dx-color-primary-hover: var(--dx-palette-primary-700);
-  --dx-color-primary-foreground: var(--dx-palette-neutral-0);
-  --dx-color-primary-subtle: var(--dx-palette-primary-100);
-
-  /* Secondary (neutral) */
-  --dx-color-secondary: var(--dx-palette-neutral-500);
-  --dx-color-secondary-hover: var(--dx-palette-neutral-600);
-  --dx-color-secondary-foreground: var(--dx-palette-neutral-0);
+  /* Neutrals */
+  --muted: oklch(0.968 0.007 247.896);
+  --muted-foreground: oklch(0.554 0.046 257.417);
+  --accent: oklch(0.968 0.007 247.896);
+  --accent-foreground: oklch(0.208 0.042 265.755);
 
   /* Status */
-  --dx-color-success: var(--dx-palette-success-600);
-  --dx-color-success-foreground: var(--dx-palette-neutral-0);
-  --dx-color-success-subtle: var(--dx-palette-success-100);
+  --destructive: oklch(0.577 0.245 27.325);
+  --destructive-foreground: oklch(1 0 0);
+  --success: oklch(0.627 0.194 149.214);
+  --success-foreground: oklch(1 0 0);
+  --warning: oklch(0.769 0.188 70.08);
+  --warning-foreground: oklch(0.129 0.042 264.695);
 
-  --dx-color-warning: var(--dx-palette-warning-600);
-  --dx-color-warning-foreground: var(--dx-palette-neutral-0);
-  --dx-color-warning-subtle: var(--dx-palette-warning-100);
+  /* Borders / inputs / focus */
+  --border: oklch(0.929 0.013 255.508);
+  --input: oklch(0.929 0.013 255.508);
+  --ring: oklch(0.623 0.214 259.815);
 
-  --dx-color-danger: var(--dx-palette-danger-600);
-  --dx-color-danger-hover: var(--dx-palette-danger-700);
-  --dx-color-danger-foreground: var(--dx-palette-neutral-0);
-  --dx-color-danger-subtle: var(--dx-palette-danger-100);
-
-  /* Surface */
-  --dx-color-background: var(--dx-palette-neutral-0);
-  --dx-color-foreground: var(--dx-palette-neutral-900);
-  --dx-color-surface: var(--dx-palette-neutral-50);
-  --dx-color-surface-foreground: var(--dx-palette-neutral-900);
-
-  /* Muted */
-  --dx-color-muted: var(--dx-palette-neutral-100);
-  --dx-color-muted-foreground: var(--dx-palette-neutral-500);
-
-  /* Border / Input */
-  --dx-color-border: var(--dx-palette-neutral-200);
-  --dx-color-input: var(--dx-palette-neutral-200);
-  --dx-color-ring: var(--dx-palette-primary-500);
-
-  /* Alias (하위 호환) */
-  --dx-color-destructive: var(--dx-color-danger);
-  --dx-color-destructive-hover: var(--dx-color-danger-hover);
-
-  /* ============================================================
-   *  2-1. DARK MODE SEMANTIC OVERRIDES
-   *  `.dark` 클래스가 적용된 스코프에서 semantic 토큰을 반전.
-   *  primitive 팔레트(50~950)는 고정. semantic alias만 바뀐다.
-   * ============================================================ */
+  /* Radius / typography */
+  --radius: 0.5rem;
+  --font-sans: 'Pretendard', system-ui, -apple-system, sans-serif;
+  --font-mono: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
 }
 
-.dark,
-:root[data-theme='dark'] {
-  /* Primary — 어두운 배경에서는 약간 밝은 톤 사용 */
-  --dx-color-primary: var(--dx-palette-primary-500);
-  --dx-color-primary-hover: var(--dx-palette-primary-400);
-  --dx-color-primary-foreground: var(--dx-palette-neutral-950);
-  --dx-color-primary-subtle: var(--dx-palette-primary-900);
+.dark {
+  --background: oklch(0.129 0.042 264.695);
+  --foreground: oklch(0.984 0.003 247.858);
+  --card: oklch(0.208 0.042 265.755);
+  --card-foreground: oklch(0.984 0.003 247.858);
+  --popover: oklch(0.208 0.042 265.755);
+  --popover-foreground: oklch(0.984 0.003 247.858);
 
-  /* Secondary */
-  --dx-color-secondary: var(--dx-palette-neutral-400);
-  --dx-color-secondary-hover: var(--dx-palette-neutral-300);
-  --dx-color-secondary-foreground: var(--dx-palette-neutral-950);
+  --primary: oklch(0.623 0.214 259.815);
+  --primary-foreground: oklch(0.129 0.042 264.695);
+  --secondary: oklch(0.372 0.044 257.287);
+  --secondary-foreground: oklch(0.984 0.003 247.858);
+  --tertiary: oklch(0.828 0.189 84.429);
+  --tertiary-foreground: oklch(0.129 0.042 264.695);
 
-  /* Status */
-  --dx-color-success: var(--dx-palette-success-500);
-  --dx-color-success-foreground: var(--dx-palette-neutral-950);
-  --dx-color-success-subtle: var(--dx-palette-success-900);
+  --muted: oklch(0.279 0.041 260.031);
+  --muted-foreground: oklch(0.704 0.04 256.788);
+  --accent: oklch(0.279 0.041 260.031);
+  --accent-foreground: oklch(0.984 0.003 247.858);
 
-  --dx-color-warning: var(--dx-palette-warning-500);
-  --dx-color-warning-foreground: var(--dx-palette-neutral-950);
-  --dx-color-warning-subtle: var(--dx-palette-warning-900);
+  --destructive: oklch(0.637 0.237 25.331);
+  --destructive-foreground: oklch(0.984 0.003 247.858);
+  --success: oklch(0.723 0.219 149.579);
+  --success-foreground: oklch(0.129 0.042 264.695);
+  --warning: oklch(0.828 0.189 84.429);
+  --warning-foreground: oklch(0.129 0.042 264.695);
 
-  --dx-color-danger: var(--dx-palette-danger-500);
-  --dx-color-danger-hover: var(--dx-palette-danger-400);
-  --dx-color-danger-foreground: var(--dx-palette-neutral-950);
-  --dx-color-danger-subtle: var(--dx-palette-danger-900);
-
-  /* Surface */
-  --dx-color-background: var(--dx-palette-neutral-950);
-  --dx-color-foreground: var(--dx-palette-neutral-50);
-  --dx-color-surface: var(--dx-palette-neutral-900);
-  --dx-color-surface-foreground: var(--dx-palette-neutral-50);
-
-  /* Muted */
-  --dx-color-muted: var(--dx-palette-neutral-800);
-  --dx-color-muted-foreground: var(--dx-palette-neutral-400);
-
-  /* Border / Input / Ring */
-  --dx-color-border: var(--dx-palette-neutral-800);
-  --dx-color-input: var(--dx-palette-neutral-800);
-  --dx-color-ring: var(--dx-palette-primary-400);
-}
-
-/* OS 다크모드 자동 감지 (`.light` 명시가 없을 때만) */
-@media (prefers-color-scheme: dark) {
-  :root:not(.light):not([data-theme='light']) {
-    --dx-color-primary: var(--dx-palette-primary-500);
-    --dx-color-primary-hover: var(--dx-palette-primary-400);
-    --dx-color-primary-foreground: var(--dx-palette-neutral-950);
-    --dx-color-primary-subtle: var(--dx-palette-primary-900);
-
-    --dx-color-secondary: var(--dx-palette-neutral-400);
-    --dx-color-secondary-hover: var(--dx-palette-neutral-300);
-    --dx-color-secondary-foreground: var(--dx-palette-neutral-950);
-
-    --dx-color-success: var(--dx-palette-success-500);
-    --dx-color-success-foreground: var(--dx-palette-neutral-950);
-    --dx-color-success-subtle: var(--dx-palette-success-900);
-
-    --dx-color-warning: var(--dx-palette-warning-500);
-    --dx-color-warning-foreground: var(--dx-palette-neutral-950);
-    --dx-color-warning-subtle: var(--dx-palette-warning-900);
-
-    --dx-color-danger: var(--dx-palette-danger-500);
-    --dx-color-danger-hover: var(--dx-palette-danger-400);
-    --dx-color-danger-foreground: var(--dx-palette-neutral-950);
-    --dx-color-danger-subtle: var(--dx-palette-danger-900);
-
-    --dx-color-background: var(--dx-palette-neutral-950);
-    --dx-color-foreground: var(--dx-palette-neutral-50);
-    --dx-color-surface: var(--dx-palette-neutral-900);
-    --dx-color-surface-foreground: var(--dx-palette-neutral-50);
-
-    --dx-color-muted: var(--dx-palette-neutral-800);
-    --dx-color-muted-foreground: var(--dx-palette-neutral-400);
-
-    --dx-color-border: var(--dx-palette-neutral-800);
-    --dx-color-input: var(--dx-palette-neutral-800);
-    --dx-color-ring: var(--dx-palette-primary-400);
-  }
-}
-
-:root {
-
-  /* ============================================================
-   *  3. TYPOGRAPHY
-   * ============================================================ */
-
-  /* Font families */
-  --dx-font-sans: 'Pretendard', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-  --dx-font-mono: ui-monospace, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
-
-  /* Font sizes — 기본 스케일 */
-  --dx-font-size-2xs: 0.625rem;  /* 10px */
-  --dx-font-size-xs: 0.75rem;    /* 12px */
-  --dx-font-size-sm: 0.875rem;   /* 14px */
-  --dx-font-size-base: 1rem;     /* 16px */
-  --dx-font-size-lg: 1.125rem;   /* 18px */
-  --dx-font-size-xl: 1.25rem;    /* 20px */
-  --dx-font-size-2xl: 1.5rem;    /* 24px */
-  --dx-font-size-3xl: 1.875rem;  /* 30px */
-  --dx-font-size-4xl: 2.25rem;   /* 36px */
-  --dx-font-size-5xl: 3rem;      /* 48px */
-  --dx-font-size-6xl: 3.75rem;   /* 60px */
-
-  /* Font sizes — 의미 기반 (Display/Heading/Body/Caption) */
-  --dx-font-size-display: var(--dx-font-size-5xl);
-  --dx-font-size-h1: var(--dx-font-size-4xl);
-  --dx-font-size-h2: var(--dx-font-size-3xl);
-  --dx-font-size-h3: var(--dx-font-size-2xl);
-  --dx-font-size-h4: var(--dx-font-size-xl);
-  --dx-font-size-h5: var(--dx-font-size-lg);
-  --dx-font-size-h6: var(--dx-font-size-base);
-  --dx-font-size-body: var(--dx-font-size-base);
-  --dx-font-size-body-sm: var(--dx-font-size-sm);
-  --dx-font-size-caption: var(--dx-font-size-xs);
-
-  /* Font weights */
-  --dx-font-weight-regular: 400;
-  --dx-font-weight-medium: 500;
-  --dx-font-weight-semibold: 600;
-  --dx-font-weight-bold: 700;
-
-  /* Line heights */
-  --dx-line-height-none: 1;
-  --dx-line-height-tight: 1.25;
-  --dx-line-height-snug: 1.375;
-  --dx-line-height-normal: 1.5;
-  --dx-line-height-relaxed: 1.625;
-  --dx-line-height-loose: 2;
-
-  /* Letter spacing */
-  --dx-letter-spacing-tighter: -0.05em;
-  --dx-letter-spacing-tight: -0.025em;
-  --dx-letter-spacing-normal: 0em;
-  --dx-letter-spacing-wide: 0.025em;
-  --dx-letter-spacing-wider: 0.05em;
-  --dx-letter-spacing-widest: 0.1em;
-
-  /* ============================================================
-   *  4. SPACING / SIZING
-   *  4px 기반 스케일. Tailwind와 동일.
-   * ============================================================ */
-
-  --dx-space-0: 0;
-  --dx-space-0-5: 0.125rem;  /* 2px */
-  --dx-space-1: 0.25rem;     /* 4px */
-  --dx-space-1-5: 0.375rem;  /* 6px */
-  --dx-space-2: 0.5rem;      /* 8px */
-  --dx-space-2-5: 0.625rem;  /* 10px */
-  --dx-space-3: 0.75rem;     /* 12px */
-  --dx-space-3-5: 0.875rem;  /* 14px */
-  --dx-space-4: 1rem;        /* 16px */
-  --dx-space-5: 1.25rem;     /* 20px */
-  --dx-space-6: 1.5rem;      /* 24px */
-  --dx-space-7: 1.75rem;     /* 28px */
-  --dx-space-8: 2rem;        /* 32px */
-  --dx-space-10: 2.5rem;     /* 40px */
-  --dx-space-12: 3rem;       /* 48px */
-  --dx-space-14: 3.5rem;     /* 56px */
-  --dx-space-16: 4rem;       /* 64px */
-  --dx-space-20: 5rem;       /* 80px */
-  --dx-space-24: 6rem;       /* 96px */
-  --dx-space-32: 8rem;       /* 128px */
-  --dx-space-40: 10rem;      /* 160px */
-  --dx-space-48: 12rem;      /* 192px */
-  --dx-space-56: 14rem;      /* 224px */
-  --dx-space-64: 16rem;      /* 256px */
-
-  /* ============================================================
-   *  5. RADIUS
-   * ============================================================ */
-
-  --dx-radius-none: 0;
-  --dx-radius-sm: 0.25rem;   /* 4px */
-  --dx-radius: 0.5rem;       /* 8px (default) */
-  --dx-radius-md: 0.5rem;    /* 8px */
-  --dx-radius-lg: 0.75rem;   /* 12px */
-  --dx-radius-xl: 1rem;      /* 16px */
-  --dx-radius-2xl: 1.5rem;   /* 24px */
-  --dx-radius-full: 9999px;
-
-  /* ============================================================
-   *  6. SHADOW
-   * ============================================================ */
-
-  --dx-shadow-none: none;
-  --dx-shadow-xs: 0 1px 1px 0 rgb(0 0 0 / 0.04);
-  --dx-shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-  --dx-shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.07), 0 2px 4px -2px rgb(0 0 0 / 0.04);
-  --dx-shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.05);
-  --dx-shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.05);
-  --dx-shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
-
-  /* ============================================================
-   *  7. Z-INDEX
-   * ============================================================ */
-
-  --dx-z-base: 0;
-  --dx-z-dropdown: 1000;
-  --dx-z-sticky: 1020;
-  --dx-z-overlay: 1030;
-  --dx-z-modal: 1040;
-  --dx-z-popover: 1050;
-  --dx-z-toast: 1060;
-  --dx-z-tooltip: 1070;
-
-  /* ============================================================
-   *  8. BREAKPOINTS / CONTAINER / GRID
-   *  Tailwind v4 기본값과 정렬. 테마 독립적이므로 .dark 오버라이드 없음.
-   *  CSS 변수는 @media 인자로 직접 쓸 수 없으므로(스펙 제약),
-   *  실제 반응형 분기는 Tailwind 유틸 `md:` 또는 `@media (min-width: 768px)`
-   *  리터럴로 작성한다. 자세한 용도는 grid.stories.ts 참고.
-   * ============================================================ */
-
-  /* Breakpoints */
-  --dx-breakpoint-sm: 640px;
-  --dx-breakpoint-md: 768px;
-  --dx-breakpoint-lg: 1024px;
-  --dx-breakpoint-xl: 1280px;
-  --dx-breakpoint-2xl: 1536px;
-
-  /* Container max-widths — breakpoint와 동일값 */
-  --dx-container-sm: 640px;
-  --dx-container-md: 768px;
-  --dx-container-lg: 1024px;
-  --dx-container-xl: 1280px;
-  --dx-container-2xl: 1536px;
-
-  /* Grid */
-  --dx-grid-columns: 12; /* unitless. `repeat(var(--dx-grid-columns), 1fr)` 형태로만 사용. */
-  --dx-grid-gutter: var(--dx-space-6); /* 24px, 기존 spacing 토큰 재사용 */
+  --border: oklch(0.279 0.041 260.031);
+  --input: oklch(0.279 0.041 260.031);
+  --ring: oklch(0.623 0.214 259.815);
 }

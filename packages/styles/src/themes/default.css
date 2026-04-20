@@ -1,36 +1,39 @@
 @import 'tailwindcss';
+@custom-variant dark (&:where(.dark, .dark *));
 @import '../tokens.css';
 
-/*
- * Tailwind v4 @theme — DX 토큰을 Tailwind 유틸(`bg-primary`, `text-foreground` 등) 로 노출.
- * Tailwind 유틸에서 쓰려면 `--color-*` 네이밍 규칙을 따라야 한다.
- * shadcn/ui 관례: semantic alias(primary/secondary/destructive/accent/muted/background/foreground)
- */
 @theme inline {
-  --color-background: var(--dx-color-background);
-  --color-foreground: var(--dx-color-foreground);
-  --color-primary: var(--dx-color-primary);
-  --color-primary-foreground: var(--dx-color-primary-foreground);
-  --color-secondary: var(--dx-color-secondary);
-  --color-secondary-foreground: var(--dx-color-secondary-foreground);
-  --color-muted: var(--dx-color-muted);
-  --color-muted-foreground: var(--dx-color-muted-foreground);
-  --color-destructive: var(--dx-color-danger);
-  --color-destructive-foreground: var(--dx-color-danger-foreground);
-  --color-success: var(--dx-color-success);
-  --color-success-foreground: var(--dx-color-success-foreground);
-  --color-warning: var(--dx-color-warning);
-  --color-warning-foreground: var(--dx-color-warning-foreground);
-  --color-border: var(--dx-color-border);
-  --color-input: var(--dx-color-input);
-  --color-ring: var(--dx-color-ring);
-  --color-surface: var(--dx-color-surface);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-tertiary: var(--tertiary);
+  --color-tertiary-foreground: var(--tertiary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
 
-  --radius-sm: var(--dx-radius-sm);
-  --radius-md: var(--dx-radius);
-  --radius-lg: var(--dx-radius-lg);
-  --radius-xl: var(--dx-radius-xl);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
 
-  --font-sans: var(--dx-font-sans);
-  --font-mono: var(--dx-font-mono);
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
 }
