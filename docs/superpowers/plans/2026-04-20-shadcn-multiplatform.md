@@ -75,7 +75,10 @@ Spring Boot 실행 환경 유무를 확인:
 which java && java -version 2>&1 | head -1
 ```
 
-Java 17+ 가 없으면 **대안**: Thymeleaf Online Playground (`https://www.thymeleaf.org/doc/articles/springmvcaccessdata.html`) 또는 Node 에서 `thymeleaf` npm 패키지 사용. 어느 쪽이든 `<ds-input th:field="*{email}">` 렌더 결과 HTML 을 확보.
+**분기:**
+- **Java 17+ 있음**: `spring-initializr` 로 최소 프로젝트 생성 후 `signup.html` 렌더 확인.
+- **Java 없지만 Node 환경**: `npm install @thymeleaf/thymeleaf` 시도. 성공하면 간이 렌더 스크립트 작성.
+- **둘 다 실패 (fallback)**: Task 10 을 **`th:attr` 워크어라운드 경로** 로 고정하고 진행. Task 1 Step 4 에 "환경 부재로 검증 스킵, 워크어라운드 채택" 기록.
 
 - [ ] **Step 2: 프로토타입 HTML 작성**
 
@@ -291,33 +294,162 @@ git commit -m "feat(styles): shadcn 표준 토큰 형태로 재작성 (3 브랜�
 
 - [ ] **Step 1: utilities.css 생성**
 
+> **주의:** Tailwind v4 `@source inline(...)` 는 **표준적으로 단일 class 문자열** 만 받는다. 브레이스 확장(`{a,b}`) 은 공식 문법이 아니며 버전에 따라 동작 여부가 다르다. 안전한 방식은 (a) 각 class 를 한 줄씩 명시, (b) 빌드 후 `grep` 으로 실제 생성됐는지 검증. 아래 예시는 한 줄당 한 class 원칙.
+
 ```css
 /* packages/styles/src/themes/utilities.css */
 @import 'tailwindcss';
 @custom-variant dark (&:where(.dark, .dark *));
 @import '../tokens.css';
 
-/* Safelist: 자주 쓰는 utility 를 강제 생성 */
-@source inline "{px,py,pt,pb,pl,pr,m,mt,mb,ml,mr,mx,my}-{0,0.5,1,1.5,2,2.5,3,4,5,6,7,8,10,12,14,16,20,24}";
-@source inline "{w,h,min-w,max-w}-{auto,full,fit,screen,0,1,2,4,6,8,10,12,16,20,24,32,40,48,56,64,72,80,96}";
-@source inline "{w,max-w}-{1/2,1/3,2/3,1/4,3/4,1/5,2/5,3/5,4/5}";
-@source inline "grid-cols-{1,2,3,4,5,6,7,8,9,10,11,12}";
-@source inline "col-span-{1,2,3,4,5,6,7,8,9,10,11,12}";
-@source inline "gap-{0,0.5,1,1.5,2,2.5,3,4,5,6,7,8,10,12,14,16}";
-@source inline "rounded{,-{none,sm,md,lg,xl,2xl,3xl,full}}";
-@source inline "border{,-{0,2,4,8}}";
-@source inline "shadow{,-{none,xs,sm,md,lg,xl,2xl,inner}}";
-@source inline "text-{xs,sm,base,lg,xl,2xl,3xl,4xl,5xl}";
-@source inline "font-{thin,light,normal,medium,semibold,bold,extrabold}";
-@source inline "leading-{none,tight,snug,normal,relaxed,loose,3,4,5,6,7,8,9,10}";
-@source inline "{bg,text,border,ring}-{primary,secondary,tertiary,destructive,success,warning,muted,accent,background,foreground,border,input,ring}";
-@source inline "{bg,text,border}-{primary,secondary,tertiary,destructive,success,warning,muted,accent}-foreground";
-@source inline "{bg,text,border}-{primary,secondary,tertiary,destructive,success,warning}/{10,20,30,40,50,60,70,80,90}";
-@source inline "{flex,inline-flex,grid,inline-grid,block,inline-block,inline,hidden,contents}";
-@source inline "flex-{row,col,row-reverse,col-reverse,wrap,nowrap,1,auto,initial,none}";
-@source inline "items-{start,end,center,baseline,stretch}";
-@source inline "justify-{start,end,center,between,around,evenly}";
-@source inline "{sm,md,lg,xl}:{w,h,grid-cols,flex,hidden,block,inline-flex,gap,px,py,m,mt,text,items,justify}-*";
+/* 명시적 safelist — 각 줄 한 class. 빌드 후 grep 검증 필수. */
+@source inline("px-0");
+@source inline("px-1");
+@source inline("px-2");
+@source inline("px-3");
+@source inline("px-4");
+@source inline("px-5");
+@source inline("px-6");
+@source inline("px-8");
+@source inline("px-10");
+@source inline("px-12");
+@source inline("px-14");
+@source inline("px-16");
+@source inline("py-0");
+@source inline("py-1");
+@source inline("py-2");
+@source inline("py-3");
+@source inline("py-4");
+@source inline("py-6");
+@source inline("py-8");
+
+@source inline("m-0");
+@source inline("m-2");
+@source inline("m-4");
+@source inline("mt-2");
+@source inline("mt-4");
+@source inline("mt-8");
+@source inline("mb-2");
+@source inline("mb-4");
+@source inline("ml-auto");
+@source inline("mr-auto");
+@source inline("mx-auto");
+
+@source inline("w-auto");
+@source inline("w-full");
+@source inline("w-fit");
+@source inline("w-1/2");
+@source inline("w-1/3");
+@source inline("w-2/3");
+@source inline("w-1/4");
+@source inline("w-3/4");
+@source inline("h-full");
+@source inline("max-w-sm");
+@source inline("max-w-md");
+@source inline("max-w-lg");
+@source inline("max-w-xl");
+@source inline("max-w-2xl");
+
+@source inline("grid-cols-1");
+@source inline("grid-cols-2");
+@source inline("grid-cols-3");
+@source inline("grid-cols-4");
+@source inline("grid-cols-6");
+@source inline("grid-cols-12");
+@source inline("gap-1");
+@source inline("gap-2");
+@source inline("gap-3");
+@source inline("gap-4");
+@source inline("gap-6");
+@source inline("gap-8");
+
+@source inline("rounded");
+@source inline("rounded-sm");
+@source inline("rounded-md");
+@source inline("rounded-lg");
+@source inline("rounded-xl");
+@source inline("rounded-2xl");
+@source inline("rounded-full");
+@source inline("rounded-none");
+
+@source inline("shadow-sm");
+@source inline("shadow-md");
+@source inline("shadow-lg");
+@source inline("shadow-xl");
+@source inline("shadow-none");
+
+@source inline("text-xs");
+@source inline("text-sm");
+@source inline("text-base");
+@source inline("text-lg");
+@source inline("text-xl");
+@source inline("text-2xl");
+@source inline("text-3xl");
+@source inline("font-normal");
+@source inline("font-medium");
+@source inline("font-semibold");
+@source inline("font-bold");
+
+@source inline("bg-primary");
+@source inline("bg-secondary");
+@source inline("bg-tertiary");
+@source inline("bg-destructive");
+@source inline("bg-success");
+@source inline("bg-warning");
+@source inline("bg-muted");
+@source inline("bg-accent");
+@source inline("bg-background");
+@source inline("text-primary");
+@source inline("text-primary-foreground");
+@source inline("text-secondary-foreground");
+@source inline("text-tertiary-foreground");
+@source inline("text-destructive-foreground");
+@source inline("text-muted-foreground");
+@source inline("text-foreground");
+@source inline("border-input");
+@source inline("border-primary");
+@source inline("border-destructive");
+@source inline("border-border");
+@source inline("ring-ring");
+
+/* Opacity modifier 는 전체 class 문자열로 별도 safelist */
+@source inline("bg-primary/10");
+@source inline("bg-primary/80");
+@source inline("bg-primary/90");
+@source inline("bg-secondary/80");
+@source inline("bg-tertiary/90");
+@source inline("bg-destructive/90");
+
+@source inline("flex");
+@source inline("inline-flex");
+@source inline("grid");
+@source inline("block");
+@source inline("inline-block");
+@source inline("hidden");
+@source inline("flex-col");
+@source inline("flex-row");
+@source inline("flex-wrap");
+@source inline("items-center");
+@source inline("items-start");
+@source inline("items-end");
+@source inline("justify-center");
+@source inline("justify-between");
+@source inline("justify-start");
+@source inline("justify-end");
+
+/* Responsive variants — md: 등 */
+@source inline("md:grid-cols-2");
+@source inline("md:grid-cols-3");
+@source inline("md:grid-cols-4");
+@source inline("md:flex-row");
+@source inline("md:hidden");
+@source inline("md:block");
+@source inline("md:w-full");
+@source inline("md:w-1/2");
+@source inline("lg:grid-cols-4");
+@source inline("lg:grid-cols-6");
+
+/* ...추가로 필요한 class 는 구현 중에 append */
 
 @theme inline {
   --color-background: var(--background);
@@ -380,12 +512,15 @@ gzip -c packages/styles/dist/styles-utilities.css | wc -c
 
 Expected gzip: 30~60KB.
 
-생성 CSS 에 `px-5` 가 포함됐는지:
+생성 CSS 에 safelist class 가 포함됐는지 **여러 class 로 검증**:
 ```bash
-grep -c "^\.px-5" packages/styles/dist/styles-utilities.css
+for cls in px-5 px-14 bg-primary bg-primary/90 md:grid-cols-3 rounded-full shadow-lg; do
+  count=$(grep -c "\\.${cls//\//\\/}" packages/styles/dist/styles-utilities.css || echo 0)
+  echo "$cls: $count"
+done
 ```
 
-Expected: 1 이상.
+Expected: 모두 1 이상. 하나라도 0 이면 `@source inline(...)` 문법이 예상과 다른 것 — 해당 class 를 수동 추가하거나 Tailwind v4 safelist 문서를 재확인.
 
 - [ ] **Step 4: 커밋**
 
@@ -525,25 +660,7 @@ export const errorMessageClasses = "text-xs font-medium text-destructive";
 
 - [ ] **Step 5: package.json `exports` + tsup 업데이트**
 
-`packages/ui/package.json`:
-
-```json
-{
-  "exports": {
-    ".": { "types": "./dist/index.d.ts", "import": "./dist/index.js" },
-    "./styles/button": { "types": "./dist/styles/button.d.ts", "import": "./dist/styles/button.js" },
-    "./styles/badge": { "types": "./dist/styles/badge.d.ts", "import": "./dist/styles/badge.js" },
-    "./styles/input": { "types": "./dist/styles/input.d.ts", "import": "./dist/styles/input.js" },
-    "./styles/label": { "types": "./dist/styles/label.d.ts", "import": "./dist/styles/label.js" },
-    "./styles/form-field": { "types": "./dist/styles/form-field.d.ts", "import": "./dist/styles/form-field.js" }
-  },
-  "scripts": {
-    "build": "tsup src/index.ts src/components/ui/button.styles.ts src/components/ui/badge.styles.ts src/components/ui/input.styles.ts src/components/ui/label.styles.ts src/components/ui/form-field.styles.ts --format esm --dts --clean --out-dir dist --entry.index src/index.ts"
-  }
-}
-```
-
-실제로는 tsup 설정 파일을 두는 편이 깔끔:
+**tsup 설정 파일** 을 두어 관리:
 
 ```ts
 // packages/ui/tsup.config.ts
@@ -565,7 +682,24 @@ export default defineConfig({
 });
 ```
 
-package.json `scripts.build` 를 `tsup` 으로 단순화.
+`packages/ui/package.json` 에는 `exports` 만 추가, `scripts.build` 는 단순히 `tsup`:
+
+```json
+{
+  "exports": {
+    ".": { "types": "./dist/index.d.ts", "import": "./dist/index.js" },
+    "./styles/button": { "types": "./dist/styles/button.d.ts", "import": "./dist/styles/button.js" },
+    "./styles/badge": { "types": "./dist/styles/badge.d.ts", "import": "./dist/styles/badge.js" },
+    "./styles/input": { "types": "./dist/styles/input.d.ts", "import": "./dist/styles/input.js" },
+    "./styles/label": { "types": "./dist/styles/label.d.ts", "import": "./dist/styles/label.js" },
+    "./styles/form-field": { "types": "./dist/styles/form-field.d.ts", "import": "./dist/styles/form-field.js" }
+  },
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch"
+  }
+}
+```
 
 - [ ] **Step 6: 빌드 및 검증**
 
@@ -737,7 +871,16 @@ export abstract class DxElement extends HTMLElement {
 }
 ```
 
-- [ ] **Step 3: ds-button.ts**
+- [ ] **Step 3: `@dx/ui` 를 먼저 빌드** (sub-path export 사용 전제)
+
+```bash
+pnpm --filter @dx/ui build
+ls packages/ui/dist/styles/
+```
+
+Expected: `button.js`, `button.d.ts`, ... 가 존재. 없으면 이후 import 가 실패하므로 반드시 선행.
+
+- [ ] **Step 4: ds-button.ts**
 
 ```ts
 // packages/elements/src/ds-button.ts
@@ -767,7 +910,7 @@ export class DsButton extends DxElement {
 }
 ```
 
-- [ ] **Step 4: ds-input / ds-label / ds-badge / ds-helper-text / ds-error-message**
+- [ ] **Step 5: ds-input / ds-label / ds-badge / ds-helper-text / ds-error-message**
 
 ```ts
 // ds-input.ts
@@ -833,7 +976,7 @@ export class DsErrorMessage extends DxElement {
 }
 ```
 
-- [ ] **Step 5: index.ts — DOMContentLoaded 지연 등록**
+- [ ] **Step 6: index.ts — DOMContentLoaded 지연 등록**
 
 ```ts
 // packages/elements/src/index.ts
@@ -866,7 +1009,7 @@ if (document.readyState === 'loading') {
 export { DsButton, DsInput, DsLabel, DsBadge, DsHelperText, DsErrorMessage };
 ```
 
-- [ ] **Step 6: pnpm-workspace.yaml 업데이트 + install + build**
+- [ ] **Step 7: pnpm-workspace.yaml 업데이트 + install + build**
 
 ```bash
 # pnpm-workspace.yaml 에 이미 packages/* 가 있으면 자동 인식
@@ -882,7 +1025,7 @@ du -h packages/elements/dist/*.js
 
 Expected: 각 30~50KB (minified, tailwind-merge 포함).
 
-- [ ] **Step 7: 스모크 테스트 HTML**
+- [ ] **Step 8: 스모크 테스트 HTML**
 
 ```html
 <!-- packages/elements/test-smoke.html -->
@@ -905,7 +1048,7 @@ Expected: 각 30~50KB (minified, tailwind-merge 포함).
 - class 에 `w-full mt-4` + baseClasses 병합 확인
 - `<ds-input>` 의 실제 `<input>` 에 `px-8` 적용 확인
 
-- [ ] **Step 8: 커밋**
+- [ ] **Step 9: 커밋**
 
 ```bash
 git add packages/elements/
@@ -922,7 +1065,48 @@ git commit -m "feat(elements): Light DOM Web Components 6개 atoms + base-elemen
 
 - [ ] **Step 1: ds-dialog.ts 작성**
 
-스펙 §3.6 의 구현 코드를 그대로 사용 (MutationObserver 로 x-show 와 dialog.showModal 동기화, dialog-close 커스텀 이벤트 디스패치).
+```ts
+// packages/elements/src/ds-dialog.ts
+import { DxElement } from './base-element.js';
+
+const dialogBaseClasses =
+  'fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-50 ' +
+  'grid w-full max-w-lg gap-4 bg-background p-6 shadow-lg rounded-lg border ' +
+  'backdrop:bg-black/50 backdrop:backdrop-blur-sm';
+
+export class DsDialog extends DxElement {
+  protected getBaseClasses(): string {
+    return dialogBaseClasses;
+  }
+
+  protected renderInternal(): HTMLElement {
+    const dialog = document.createElement('dialog');
+
+    // Alpine.js x-show 가 display:none 으로 전환하면 우리도 dialog.close() 호출.
+    // x-show 가 원복하면 dialog.showModal() 호출.
+    const observer = new MutationObserver(() => {
+      const hidden = this.style.display === 'none' || this.hasAttribute('hidden');
+      if (!hidden && !dialog.open) dialog.showModal();
+      else if (hidden && dialog.open) dialog.close();
+    });
+    observer.observe(this, { attributes: true, attributeFilter: ['style', 'hidden'] });
+
+    // ESC / backdrop 로 native <dialog> 가 닫히면 dialog-close 커스텀 이벤트 발화
+    dialog.addEventListener('close', () => {
+      this.dispatchEvent(
+        new CustomEvent('dialog-close', { bubbles: true, composed: true }),
+      );
+    });
+
+    // backdrop 클릭 감지 — dialog 영역 바깥 (사실상 ::backdrop 자체)
+    dialog.addEventListener('click', (e) => {
+      if (e.target === dialog) dialog.close();
+    });
+
+    return dialog;
+  }
+}
+```
 
 - [ ] **Step 2: index.ts 에 등록 추가**
 
@@ -1064,39 +1248,13 @@ const preview: Preview = {
 export default preview;
 ```
 
-- [ ] **Step 3: 3탭 custom source transformer**
+- [ ] **Step 3: 3탭 UI — MDX 기반으로 확정**
 
-Storybook 8 기본 `source.code` 는 string 1 개. 3탭 구현 방법 2가지:
-1. `@storybook/addon-docs` 의 `SourceCode` 블록을 커스텀 MDX 로 확장
-2. `parameters.docs.source.transform` 으로 메타에 접근해 조건부 렌더
+Storybook 기본 "Show code" 는 단일 문자열만 지원하므로 실제 탭 UI 는 **각 컴포넌트 MDX docs 페이지에서 `<Source>` 블록 3개로 구현.** Stories 자체는 기본 코드(React) 만 표시.
 
-간단히 option 2 사용. Story 에서 `parameters.docs.source.code` 를 객체로 넘기고 `transform` 에서 Storybook UI 에 탭 생성:
+성공 기준 "3탭 코드뷰" = MDX docs 페이지 3섹션 (React / Thymeleaf / HTML) 표시. 실제 "탭" 인터랙션이 아닌 3개의 명확한 섹션으로 구분된 코드 블록.
 
-```ts
-// packages/storybook/.storybook/source-transformer.ts
-export function multiSource(sources: {
-  react: string;
-  thymeleaf: string;
-  html: string;
-}): string {
-  // Storybook "Show code" 에는 하나의 문자열만 표시 가능하므로
-  // 주석으로 탭 구분 + 실제 탭 UI 는 MDX 에서 별도 렌더
-  return [
-    '/* ===== React ===== */',
-    sources.react,
-    '',
-    '/* ===== Thymeleaf ===== */',
-    sources.thymeleaf,
-    '',
-    '/* ===== HTML ===== */',
-    sources.html,
-  ].join('\n');
-}
-```
-
-**제약 사항 명시:** Storybook 기본 "Show code" 는 단일 문자열. 3탭 UI 를 원하면 MDX 기반 Docs 페이지에서 `<Tabs>` 컴포넌트로 구현. Stories 에서는 주석 구분으로 충분.
-
-대안: 각 컴포넌트마다 MDX docs 페이지 작성:
+예시:
 
 ```tsx
 // stories/components/Button.mdx
@@ -1252,7 +1410,17 @@ git commit -m "feat(storybook): React+Vite 로 전환, Foundation/Components 재
 **Files:**
 - Modify: `examples/react-nextjs/app/page.tsx`
 
-- [ ] **Step 1: page.tsx 에 tertiary 버튼 시연 추가**
+- [ ] **Step 1: 기존 예제 파일에 `--dx-*` 토큰 잔존 여부 확인**
+
+Task 2 에서 tokens.css 구조가 바뀌었으므로 예제가 `--dx-color-primary` 같은 구 토큰을 참조하면 빌드 실패. 먼저 grep:
+
+```bash
+grep -rn "\-\-dx-" examples/react-nextjs/app examples/react-nextjs/*.tsx 2>/dev/null
+```
+
+Expected: 출력 없음. 있으면 새 토큰 이름(예: `--primary`) 으로 치환.
+
+- [ ] **Step 2: page.tsx 에 tertiary 버튼 시연 추가**
 
 3 섹션 중 Tailwind 오버라이드 섹션에 `<Button variant="tertiary">` 추가.
 
@@ -1260,7 +1428,7 @@ git commit -m "feat(storybook): React+Vite 로 전환, Foundation/Components 재
 <Button variant="tertiary">Tertiary</Button>
 ```
 
-- [ ] **Step 2: 빌드 검증**
+- [ ] **Step 3: 빌드 검증**
 
 ```bash
 pnpm --filter @dx-examples/react-nextjs build
@@ -1268,7 +1436,7 @@ pnpm --filter @dx-examples/react-nextjs build
 
 Expected: 성공, tertiary 버튼이 amber 톤으로 렌더.
 
-- [ ] **Step 3: 커밋**
+- [ ] **Step 4: 커밋**
 
 ```bash
 git add examples/react-nextjs/
@@ -1355,7 +1523,13 @@ git commit -m "feat(examples): react-nextjs 에 tertiary variant 시연 추가"
         <ds-input type="email" class="border-2 border-primary" placeholder="border-2"/>
       </section>
 
-      <!-- 4. Dialog (Alpine.js 통합) -->
+      <!--
+        4. Dialog (Alpine.js 통합)
+        !! Task 6 검증 결과에 따라 조건부 포함 !!
+        - (A) 전부 통과: 그대로 사용
+        - (B) 일부 실패: 실패 항목 주석 + 제약 명시
+        - (C) 치명적 실패: 이 section 을 아예 제거하고 native <dialog> 직접 사용 안내
+      -->
       <section class="flex flex-col gap-4 p-6 rounded-xl border"
                x-data="{ open: false }">
         <h2 class="text-xl font-semibold">4. Dialog (Alpine.js)</h2>
@@ -1510,11 +1684,19 @@ pnpm --filter @dx-examples/react-nextjs build
 
 Expected: 전부 성공.
 
-- [ ] **Step 2: Storybook a11y 재확인**
+- [ ] **Step 2: `@dx/elements` 번들 크기 검증**
+
+```bash
+gzip -c packages/elements/dist/dx-elements.mjs | wc -c
+```
+
+Expected: < 50000 (50KB). 초과 시 tailwind-merge tree-shakeable subset 또는 다른 병합 라이브러리 검토.
+
+- [ ] **Step 3: Storybook a11y 재확인**
 
 Playwright MCP 로 모든 atom + Foundation + Dialog 스토리 axe 스캔 → violations 0.
 
-- [ ] **Step 3: vanilla-html + thymeleaf-spring 스모크**
+- [ ] **Step 4: vanilla-html + thymeleaf-spring 스모크**
 
 ```bash
 pnpm example:html  # 브라우저에서 4섹션 체크
@@ -1522,7 +1704,7 @@ pnpm example:html  # 브라우저에서 4섹션 체크
 
 Thymeleaf 는 (Java 환경 있으면) `cp -r` 스크립트로 Spring 프로젝트에 복사 후 로컬 실행.
 
-- [ ] **Step 4: 푸시**
+- [ ] **Step 5: 푸시**
 
 ```bash
 git push origin feat/v0.2.0-shadcn
