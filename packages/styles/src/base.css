@@ -6,60 +6,70 @@
  * 소비자가 `--dx-color-primary` 같은 semantic 변수를 wrapper 에 override 하면
  * 해당 wrapper 하위 컴포넌트에만 브랜드 컬러가 적용되도록 한다.
  *
+ * 선택자를 `*` 로 쓴 이유:
+ *   CSS `var()` 는 선언 시점에 해석되고 해석된 값이 상속된다(사용 시점 재해석 아님).
+ *   `:root` 에만 `--sl-color-primary-600: var(--dx-color-primary)` 을 두면
+ *   :root 에서 한 번 파랑으로 해석된 값만 상속되어, wrapper 에서 `--dx-color-primary` 를
+ *   덮어써도 `--sl-color-primary-600` 은 바뀌지 않는다. `*` 로 모든 요소에 동일 선언을
+ *   추가해 각 요소 스코프에서 재해석되도록 한다. 변수 참조만 있어 비용은 낮다.
+ *
  * 나머지 shade(50 / 200~400 / 800~950) 는 primitive 팔레트 직결 — fine-grained 색상 손실은
  * 트레이드오프지만 브랜드 전환 시 대부분 시각적으로 눈에 띄는 부분은 4개 shade 에 집중됨.
  * 전체 팔레트 swap 이 필요하면 `--dx-palette-*` 11개를 직접 override.
  */
 
-:root {
+* {
   /* Primary — 600/700 은 버튼 bg/hover, 100 은 subtle, 500 은 focus ring */
-  --sl-color-primary-50: var(--dx-palette-primary-50);
   --sl-color-primary-100: var(--dx-color-primary-subtle);
-  --sl-color-primary-200: var(--dx-palette-primary-200);
-  --sl-color-primary-300: var(--dx-palette-primary-300);
-  --sl-color-primary-400: var(--dx-palette-primary-400);
   --sl-color-primary-500: var(--dx-color-ring);
   --sl-color-primary-600: var(--dx-color-primary);
   --sl-color-primary-700: var(--dx-color-primary-hover);
+
+  /* Success / Warning / Danger — 600 은 변형, 100 은 subtle */
+  --sl-color-success-100: var(--dx-color-success-subtle);
+  --sl-color-success-600: var(--dx-color-success);
+  --sl-color-warning-100: var(--dx-color-warning-subtle);
+  --sl-color-warning-600: var(--dx-color-warning);
+  --sl-color-danger-100: var(--dx-color-danger-subtle);
+  --sl-color-danger-600: var(--dx-color-danger);
+  --sl-color-danger-700: var(--dx-color-danger-hover);
+}
+
+:root {
+  /* Shoelace 50/200~400/800~950 은 primitive 팔레트 직결 (위 `*` 블록이 커버 안 함) */
+  --sl-color-primary-50: var(--dx-palette-primary-50);
+  --sl-color-primary-200: var(--dx-palette-primary-200);
+  --sl-color-primary-300: var(--dx-palette-primary-300);
+  --sl-color-primary-400: var(--dx-palette-primary-400);
   --sl-color-primary-800: var(--dx-palette-primary-800);
   --sl-color-primary-900: var(--dx-palette-primary-900);
   --sl-color-primary-950: var(--dx-palette-primary-950);
 
-  /* Success */
   --sl-color-success-50: var(--dx-palette-success-50);
-  --sl-color-success-100: var(--dx-color-success-subtle);
   --sl-color-success-200: var(--dx-palette-success-200);
   --sl-color-success-300: var(--dx-palette-success-300);
   --sl-color-success-400: var(--dx-palette-success-400);
   --sl-color-success-500: var(--dx-palette-success-500);
-  --sl-color-success-600: var(--dx-color-success);
   --sl-color-success-700: var(--dx-palette-success-700);
   --sl-color-success-800: var(--dx-palette-success-800);
   --sl-color-success-900: var(--dx-palette-success-900);
   --sl-color-success-950: var(--dx-palette-success-950);
 
-  /* Warning */
   --sl-color-warning-50: var(--dx-palette-warning-50);
-  --sl-color-warning-100: var(--dx-color-warning-subtle);
   --sl-color-warning-200: var(--dx-palette-warning-200);
   --sl-color-warning-300: var(--dx-palette-warning-300);
   --sl-color-warning-400: var(--dx-palette-warning-400);
   --sl-color-warning-500: var(--dx-palette-warning-500);
-  --sl-color-warning-600: var(--dx-color-warning);
   --sl-color-warning-700: var(--dx-palette-warning-700);
   --sl-color-warning-800: var(--dx-palette-warning-800);
   --sl-color-warning-900: var(--dx-palette-warning-900);
   --sl-color-warning-950: var(--dx-palette-warning-950);
 
-  /* Danger */
   --sl-color-danger-50: var(--dx-palette-danger-50);
-  --sl-color-danger-100: var(--dx-color-danger-subtle);
   --sl-color-danger-200: var(--dx-palette-danger-200);
   --sl-color-danger-300: var(--dx-palette-danger-300);
   --sl-color-danger-400: var(--dx-palette-danger-400);
   --sl-color-danger-500: var(--dx-palette-danger-500);
-  --sl-color-danger-600: var(--dx-color-danger);
-  --sl-color-danger-700: var(--dx-color-danger-hover);
   --sl-color-danger-800: var(--dx-palette-danger-800);
   --sl-color-danger-900: var(--dx-palette-danger-900);
   --sl-color-danger-950: var(--dx-palette-danger-950);
