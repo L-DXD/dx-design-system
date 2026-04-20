@@ -6,6 +6,7 @@ Shoelace(Lit Web Components) 기반 멀티 플랫폼 디자인 시스템. **Reac
 
 - 아키텍처 → [`docs/architecture.md`](./docs/architecture.md)
 - 개발 / 기여 가이드 → [`docs/contributing.md`](./docs/contributing.md)
+- 실행 가능한 예제 → [`examples/`](./examples) (React/Next.js · Thymeleaf · vanilla HTML)
 
 ---
 

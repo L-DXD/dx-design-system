@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DX Design System — Vanilla HTML 예제</title>
+
+    <!--
+      로컬 워크스페이스의 @dx/core 번들과 @dx/styles CSS 를 상대 경로로 참조한다.
+      실제 서비스에서는 CDN(jsdelivr) 또는 빌드 산출물을 서빙하는 경로로 교체.
+    -->
+    <script type="module" src="../../packages/core/dist/dx-core.bundle.js"></script>
+    <link rel="stylesheet" href="../../packages/styles/dist/styles.css" />
+
+    <style>
+      body {
+        font-family: var(--dx-font-sans);
+        color: var(--dx-color-foreground);
+        background: var(--dx-color-background);
+        margin: 0;
+        padding: 48px 24px;
+      }
+      main {
+        max-width: var(--dx-container-md);
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        gap: 32px;
+      }
+      section {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+      h1 {
+        font-size: var(--dx-font-size-h1);
+        margin: 0;
+      }
+      h2 {
+        font-size: var(--dx-font-size-h3);
+        margin: 0;
+      }
+      .toolbar {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <header class="toolbar">
+        <h1>DX Design System</h1>
+        <ds-badge variant="primary">vanilla-html</ds-badge>
+        <span style="flex: 1"></span>
+        <ds-toggle id="theme-toggle">다크모드</ds-toggle>
+      </header>
+
+      <section>
+        <h2>Button</h2>
+        <div class="toolbar">
+          <ds-button variant="primary">Primary</ds-button>
+          <ds-button variant="secondary">Secondary</ds-button>
+          <ds-button variant="destructive">Destructive</ds-button>
+          <ds-button disabled>Disabled</ds-button>
+        </div>
+      </section>
+
+      <section>
+        <h2>Form</h2>
+        <form id="signup" style="display: flex; flex-direction: column; gap: 16px;">
+          <ds-form-field>
+            <ds-label html-for="email" required>이메일</ds-label>
+            <ds-input id="email" type="email" placeholder="name@company.com"></ds-input>
+            <ds-helper-text>회사 이메일을 입력하세요</ds-helper-text>
+          </ds-form-field>
+
+          <ds-form-field>
+            <ds-label html-for="password" required>비밀번호</ds-label>
+            <ds-input id="password" type="password"></ds-input>
+          </ds-form-field>
+
+          <ds-form-field orientation="horizontal">
+            <ds-checkbox id="terms"></ds-checkbox>
+            <ds-label html-for="terms">이용약관에 동의합니다</ds-label>
+          </ds-form-field>
+
+          <ds-button type="submit" variant="primary">가입하기</ds-button>
+        </form>
+      </section>
+    </main>
+
+    <script type="module">
+      // 다크모드 토글 — ds-toggle 의 ds-change 이벤트는 Shoelace sl-change 를 재디스패치한 것.
+      const toggle = document.getElementById('theme-toggle');
+      toggle.addEventListener('ds-change', (e) => {
+        document.documentElement.classList.toggle('dark', e.target.checked);
+      });
+
+      // 폼 제출 — 실제 서비스에서는 fetch/axios 로 API 호출.
+      document.getElementById('signup').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const email = document.getElementById('email').value;
+        alert(`가입 요청: ${email}`);
+      });
+    </script>
+  </body>
+</html>

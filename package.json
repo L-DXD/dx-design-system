@@ -5,9 +5,13 @@
   "scripts": {
     "dev": "turbo run dev",
     "build": "turbo run build",
+    "build:packages": "pnpm --filter @dx/styles build && pnpm --filter @dx/core build && pnpm --filter @dx/react build",
     "lint": "turbo run lint",
     "test": "turbo run test",
-    "storybook": "pnpm --filter storybook run storybook"
+    "storybook": "pnpm --filter storybook run storybook",
+    "example:react": "pnpm build:packages && pnpm --filter @dx-examples/react-nextjs dev",
+    "example:html": "pnpm build:packages && npx --yes http-server examples/vanilla-html -p 5173 -c-1 -o",
+    "example:thymeleaf": "node -e \"console.log('\\nThymeleaf 예제는 Spring Boot 프로젝트에 템플릿을 복사해 실행해야 합니다.\\nREADME: examples/thymeleaf-spring/README.md\\n')\""
   },
   "devDependencies": {
     "turbo": "^2.9.6"

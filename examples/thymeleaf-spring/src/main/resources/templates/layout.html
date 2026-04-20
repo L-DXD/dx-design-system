@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko" th:attr="data-theme=${userTheme ?: 'light'}">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title th:text="${pageTitle} ?: 'DX Design System'">DX Design System</title>
+
+    <!--
+      배포 환경에 따라 둘 중 하나를 선택:
+      1) 사내 static 서빙: /css/styles.css · /js/dx-core.bundle.js
+      2) CDN: https://cdn.jsdelivr.net/npm/@dx/styles@1/... (버전 고정 권장)
+    -->
+    <link rel="stylesheet" th:href="@{/css/styles.css}" />
+    <script type="module" th:src="@{/js/dx-core.bundle.js}"></script>
+
+    <style>
+      body {
+        font-family: var(--dx-font-sans);
+        color: var(--dx-color-foreground);
+        background: var(--dx-color-background);
+        margin: 0;
+        padding: 48px 24px;
+      }
+      main {
+        max-width: var(--dx-container-md);
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        gap: 32px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <main>
+      <header>
+        <h1 style="font-size: var(--dx-font-size-h1); margin: 0;">DX Design System</h1>
+        <p style="color: var(--dx-color-muted-foreground); margin-top: 8px;">
+          Thymeleaf + Spring Boot 최소 예제
+        </p>
+      </header>
+
+      <div th:replace="${contentFragment}">
+        <!-- 각 페이지의 fragment 가 여기에 삽입됨 -->
+      </div>
+    </main>
+  </body>
+</html>

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+  <body>
+    <!--
+      signup.html — 회원가입 폼 fragment.
+      layout.html 의 ${contentFragment} 슬롯에 삽입된다.
+      Controller 에서 Model 에 signupForm 과 contentFragment 를 담아 layout 을 렌더.
+    -->
+    <div th:fragment="content" style="display: flex; flex-direction: column; gap: 24px;">
+      <h2 style="font-size: var(--dx-font-size-h3); margin: 0;">가입하기</h2>
+
+      <form th:action="@{/signup}" th:object="${signupForm}" method="post"
+            style="display: flex; flex-direction: column; gap: 16px;">
+
+        <ds-form-field>
+          <ds-label html-for="email" required>이메일</ds-label>
+          <ds-input id="email" type="email"
+                    th:field="*{email}"
+                    placeholder="name@company.com"></ds-input>
+          <ds-helper-text>회사 이메일을 입력하세요</ds-helper-text>
+          <ds-error-message th:if="${#fields.hasErrors('email')}"
+                            th:errors="*{email}"></ds-error-message>
+        </ds-form-field>
+
+        <ds-form-field>
+          <ds-label html-for="password" required>비밀번호</ds-label>
+          <ds-input id="password" type="password" th:field="*{password}"></ds-input>
+          <ds-error-message th:if="${#fields.hasErrors('password')}"
+                            th:errors="*{password}"></ds-error-message>
+        </ds-form-field>
+
+        <ds-form-field orientation="horizontal">
+          <ds-checkbox id="terms" th:field="*{terms}"></ds-checkbox>
+          <ds-label html-for="terms">이용약관에 동의합니다</ds-label>
+        </ds-form-field>
+
+        <ds-button type="submit" variant="primary">가입하기</ds-button>
+      </form>
+    </div>
+  </body>
+</html>
