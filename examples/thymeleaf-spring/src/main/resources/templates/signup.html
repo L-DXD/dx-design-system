@@ -4,151 +4,106 @@
     <!--
       signup.html — 회원가입 폼 fragment.
       layout.html 의 ${contentFragment} 슬롯에 삽입.
+
+      !! 중요 !!
+      Thymeleaf 의 th:field 는 <input>/<select>/<textarea> 에만 작동.
+      <ds-input> 은 custom element 이므로 th:field 가 fallthrough 해 오동작한다.
+      따라서 th:attr / th:text / th:value 등으로 개별 속성을 명시적으로 부여한다.
     -->
-
-    <!-- 이 fragment 에서만 쓸 스코프 스타일 (실무에서는 static/css/ 로 분리) -->
-    <style>
-      .brand-purple {
-        --dx-color-primary: #8b5cf6;
-        --dx-color-primary-hover: #7c3aed;
-        --dx-color-primary-foreground: #ffffff;
-        --dx-color-primary-subtle: #ede9fe;
-        --dx-color-ring: #8b5cf6;
-      }
-      .brand-emerald {
-        --dx-color-primary: #10b981;
-        --dx-color-primary-hover: #059669;
-        --dx-color-primary-foreground: #ffffff;
-        --dx-color-primary-subtle: #d1fae5;
-        --dx-color-ring: #10b981;
-      }
-      .theme-card {
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-        padding: 16px;
-        border: 1px solid var(--dx-color-border);
-        border-radius: 8px;
-      }
-      .section {
-        padding: 24px;
-        border: 1px solid var(--dx-color-border);
-        border-radius: 12px;
-        margin-bottom: 32px;
-      }
-    </style>
-
     <div th:fragment="content">
-      <!-- ================================================ -->
-      <!-- 1. 기본 사용                                      -->
-      <!-- ================================================ -->
-      <section class="section">
-        <h2>1. 기본 사용 (override 없음)</h2>
+      <!-- 1. 기본 폼 -->
+      <section class="flex flex-col gap-4 p-6 rounded-xl border">
+        <h2 class="text-xl font-semibold">1. 기본 사용</h2>
 
         <form th:action="@{/signup}" th:object="${signupForm}" method="post"
-              style="display: flex; flex-direction: column; gap: 16px; margin-top: 16px;">
+              class="flex flex-col gap-4">
 
-          <ds-form-field>
-            <ds-label html-for="email" required>이메일</ds-label>
-            <ds-input id="email" type="email"
-                      th:field="*{email}"
-                      placeholder="name@company.com"></ds-input>
-            <ds-helper-text>회사 이메일을 입력하세요</ds-helper-text>
+          <div class="flex flex-col gap-2">
+            <ds-label for="email" th:text="#{form.email.label}">이메일</ds-label>
+            <ds-input id="email"
+                      name="email"
+                      type="email"
+                      placeholder="name@company.com"
+                      th:value="*{email}"/>
+            <ds-helper-text th:text="#{form.email.helper}">회사 이메일을 입력하세요</ds-helper-text>
             <ds-error-message th:if="${#fields.hasErrors('email')}"
                               th:errors="*{email}"></ds-error-message>
-          </ds-form-field>
+          </div>
 
-          <ds-form-field>
-            <ds-label html-for="password" required>비밀번호</ds-label>
-            <ds-input id="password" type="password" th:field="*{password}"></ds-input>
-          </ds-form-field>
+          <div class="flex flex-col gap-2">
+            <ds-label for="password">비밀번호</ds-label>
+            <ds-input id="password"
+                      name="password"
+                      type="password"
+                      th:value="*{password}"/>
+            <ds-error-message th:if="${#fields.hasErrors('password')}"
+                              th:errors="*{password}"></ds-error-message>
+          </div>
 
-          <ds-form-field orientation="horizontal">
-            <ds-checkbox id="terms" th:field="*{terms}"></ds-checkbox>
-            <ds-label html-for="terms">이용약관에 동의합니다</ds-label>
-          </ds-form-field>
+          <div class="flex flex-row items-center gap-2">
+            <!-- ds-checkbox 는 없음 (Radix 의존). native input 사용. -->
+            <input type="checkbox"
+                   id="terms"
+                   name="terms"
+                   class="size-4 rounded border-input"
+                   th:checked="*{terms}"/>
+            <ds-label for="terms">이용약관에 동의합니다</ds-label>
+          </div>
 
-          <ds-button type="submit" variant="primary">가입하기</ds-button>
+          <ds-button type="submit" th:text="#{form.submit}">가입하기</ds-button>
         </form>
       </section>
 
-      <!-- ================================================ -->
-      <!-- 2. Token 오버라이드 (브랜드 컬러)                   -->
-      <!-- ================================================ -->
-      <section class="section">
-        <h2>2. Token 오버라이드 (브랜드 컬러)</h2>
-        <p style="color: var(--dx-color-muted-foreground);">
-          같은 컴포넌트를 3개 브랜드로 렌더. wrapper 에 CSS 변수 재선언.
-          실무에서는 <code>th:class="|theme-card brand-${service.theme}|"</code> 로 Model 값에 따라
-          동적으로 브랜드를 입힐 수 있다.
-        </p>
-
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6" style="margin-top: 16px;">
-          <!-- 기본 -->
-          <div class="theme-card">
-            <ds-badge variant="primary">기본 (DX)</ds-badge>
-            <ds-form-field>
-              <ds-label html-for="email-default" required>이메일</ds-label>
-              <ds-input id="email-default" type="email"></ds-input>
-            </ds-form-field>
-            <ds-button variant="primary">가입</ds-button>
+      <!-- 2. Token 오버라이드 -->
+      <section class="flex flex-col gap-4 p-6 rounded-xl border">
+        <h2 class="text-xl font-semibold">2. Token 오버라이드</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="flex flex-col gap-3 p-4 rounded-lg border">
+            <ds-badge>기본</ds-badge>
+            <ds-button>가입</ds-button>
           </div>
-
-          <!-- Purple -->
-          <div class="theme-card brand-purple">
-            <ds-badge variant="primary">Purple</ds-badge>
-            <ds-form-field>
-              <ds-label html-for="email-purple" required>이메일</ds-label>
-              <ds-input id="email-purple" type="email"></ds-input>
-            </ds-form-field>
-            <ds-button variant="primary">가입</ds-button>
+          <div class="flex flex-col gap-3 p-4 rounded-lg border"
+               style="--primary:#8b5cf6; --ring:#8b5cf6;">
+            <ds-badge>Purple</ds-badge>
+            <ds-button>가입</ds-button>
           </div>
-
-          <!-- Emerald — 동적 브랜드 예시도 가능: th:class="|theme-card brand-${theme}|" -->
-          <div class="theme-card brand-emerald">
-            <ds-badge variant="primary">Emerald</ds-badge>
-            <ds-form-field>
-              <ds-label html-for="email-emerald" required>이메일</ds-label>
-              <ds-input id="email-emerald" type="email"></ds-input>
-            </ds-form-field>
-            <ds-button variant="primary">가입</ds-button>
+          <div class="flex flex-col gap-3 p-4 rounded-lg border"
+               style="--primary:#10b981; --ring:#10b981;">
+            <ds-badge>Emerald</ds-badge>
+            <ds-button>가입</ds-button>
           </div>
         </div>
       </section>
 
-      <!-- ================================================ -->
-      <!-- 3. Tailwind classname 오버라이드                   -->
-      <!-- ================================================ -->
-      <section class="section">
-        <h2>3. Tailwind 오버라이드</h2>
-        <p style="color: var(--dx-color-muted-foreground);">
-          4가지 Thymeleaf 패턴: 정적 <code>class</code>, 조건부 <code>th:classappend</code>,
-          리터럴 치환 <code>th:class="|...|"</code>, 동적 variant.
-        </p>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4" style="margin-top: 16px;">
-          <!-- 정적 class -->
-          <ds-button variant="primary" class="w-full">w-full</ds-button>
-
-          <!-- 조건부: hasError 면 추가 클래스 -->
-          <ds-button variant="primary"
-                     class="w-full"
-                     th:classappend="${hasError} ? 'ring-2 ring-red-500'">
+      <!-- 3. Tailwind 오버라이드 -->
+      <section class="flex flex-col gap-4 p-6 rounded-xl border">
+        <h2 class="text-xl font-semibold">3. Tailwind 오버라이드</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <ds-button>default</ds-button>
+          <ds-button variant="secondary">secondary</ds-button>
+          <ds-button variant="tertiary">tertiary</ds-button>
+          <ds-button variant="destructive">destructive</ds-button>
+          <!-- 조건부 class 예 -->
+          <ds-button class="w-full"
+                     th:classappend="${hasError} ? 'ring-2 ring-destructive'">
             조건부 class
           </ds-button>
-
-          <!-- Model 값으로 class 동적 구성 -->
-          <ds-button variant="primary"
-                     th:class="|w-full ${buttonSize ?: 'mt-0'}|">
-            동적 class
-          </ds-button>
-
-          <!-- Shoelace variant 도 Model 에서 -->
-          <ds-button th:attr="variant=${isPrimary ? 'primary' : 'secondary'}"
-                     class="w-auto ml-auto">
-            동적 variant
-          </ds-button>
+          <!-- 동적 class 예 -->
+          <ds-button th:class="|w-full ${buttonSize ?: 'mt-0'}|">동적 class</ds-button>
         </div>
+      </section>
+
+      <!-- 4. Dialog (Alpine.js) -->
+      <section class="flex flex-col gap-4 p-6 rounded-xl border"
+               x-data="{ open: false }">
+        <h2 class="text-xl font-semibold">4. Dialog (Alpine.js)</h2>
+        <ds-button x-on:click="open = true" th:text="#{form.terms.view}">약관 보기</ds-button>
+        <ds-dialog x-show="open" x-on:dialog-close="open = false"
+                   class="flex flex-col gap-3">
+          <h3 class="text-lg font-semibold" th:text="#{form.terms.title}">이용약관</h3>
+          <p class="text-sm" th:text="#{form.terms.body}">본문...</p>
+          <ds-button variant="outline" x-on:click="open = false">닫기</ds-button>
+        </ds-dialog>
       </section>
     </div>
   </body>

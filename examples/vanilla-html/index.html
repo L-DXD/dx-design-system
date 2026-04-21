@@ -3,195 +3,107 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>DX Design System — Vanilla HTML 예제</title>
+    <title>DX Design System — Vanilla HTML</title>
 
-    <!-- @dx/core (Web Components) + @dx/styles (tokens + theme) -->
-    <script type="module" src="../../packages/core/dist/dx-core.bundle.js"></script>
-    <link rel="stylesheet" href="../../packages/styles/dist/styles.css" />
+    <link rel="stylesheet"
+          href="../../packages/styles/dist/styles-utilities.css" />
 
-    <!-- (선택) Tailwind Play CDN — 소비자 마크업용 유틸리티 클래스 -->
-    <script src="https://cdn.tailwindcss.com"></script>
-
-    <style>
-      body {
-        font-family: var(--dx-font-sans);
-        color: var(--dx-color-foreground);
-        background: var(--dx-color-background);
-        margin: 0;
-        padding: 48px 24px;
-      }
-      main {
-        max-width: var(--dx-container-md);
-        margin: 0 auto;
-        display: flex;
-        flex-direction: column;
-        gap: 40px;
-      }
-      section {
-        display: flex;
-        flex-direction: column;
-        gap: 16px;
-        padding: 24px;
-        border: 1px solid var(--dx-color-border);
-        border-radius: 12px;
-      }
-      h1 { font-size: var(--dx-font-size-h1); margin: 0; }
-      h2 { font-size: var(--dx-font-size-h3); margin: 0; }
-
-      /*
-        Token 오버라이드: 특정 wrapper 에만 브랜드 컬러를 씌우고 싶을 때 class 로 스코프.
-        페이지 전체에 적용하려면 :root 스코프로 별도 theme.css 에 선언 후 @dx/styles 뒤에 로드.
-      */
-      .brand-purple {
-        --dx-color-primary: #8b5cf6;
-        --dx-color-primary-hover: #7c3aed;
-        --dx-color-primary-foreground: #ffffff;
-        --dx-color-primary-subtle: #ede9fe;
-        --dx-color-ring: #8b5cf6;
-      }
-      .brand-emerald {
-        --dx-color-primary: #10b981;
-        --dx-color-primary-hover: #059669;
-        --dx-color-primary-foreground: #ffffff;
-        --dx-color-primary-subtle: #d1fae5;
-        --dx-color-ring: #10b981;
-      }
-      .theme-card {
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-        padding: 16px;
-        border: 1px solid var(--dx-color-border);
-        border-radius: 8px;
-      }
-    </style>
+    <script defer src="https://unpkg.com/alpinejs@3"></script>
+    <script type="module" defer
+            src="../../packages/elements/dist/dx-elements.mjs"></script>
   </head>
-  <body>
-    <main>
-      <header class="flex items-center gap-2">
-        <h1>DX Design System</h1>
-        <ds-badge variant="primary">vanilla-html</ds-badge>
-        <span class="flex-1"></span>
-        <ds-toggle id="theme-toggle">다크모드</ds-toggle>
+  <body class="bg-background text-foreground p-10">
+    <main class="max-w-2xl mx-auto flex flex-col gap-10">
+      <header>
+        <h1 class="text-3xl font-bold">DX Design System</h1>
+        <p class="text-muted-foreground mt-2">
+          순수 HTML 예제 — @dx/elements + Alpine.js
+        </p>
       </header>
 
-      <!-- ========================================================= -->
-      <!-- 1. 기본 사용 (override 없음)                                -->
-      <!-- ========================================================= -->
-      <section>
-        <h2>1. 기본 사용 (override 없음)</h2>
-
-        <form id="signup" style="display: flex; flex-direction: column; gap: 16px;">
-          <ds-form-field>
-            <ds-label html-for="email" required>이메일</ds-label>
+      <!-- 1. 기본 -->
+      <section class="flex flex-col gap-4 p-6 rounded-xl border">
+        <h2 class="text-xl font-semibold">1. 기본 사용</h2>
+        <form class="flex flex-col gap-4" onsubmit="event.preventDefault(); alert('submit')">
+          <div class="flex flex-col gap-2">
+            <ds-label for="email">이메일</ds-label>
             <ds-input id="email" type="email" placeholder="name@company.com"></ds-input>
             <ds-helper-text>회사 이메일을 입력하세요</ds-helper-text>
-          </ds-form-field>
-
-          <ds-form-field>
-            <ds-label html-for="password" required>비밀번호</ds-label>
+          </div>
+          <div class="flex flex-col gap-2">
+            <ds-label for="password">비밀번호</ds-label>
             <ds-input id="password" type="password"></ds-input>
-          </ds-form-field>
-
-          <ds-form-field orientation="horizontal">
-            <ds-checkbox id="terms"></ds-checkbox>
-            <ds-label html-for="terms">이용약관에 동의합니다</ds-label>
-          </ds-form-field>
-
-          <ds-button type="submit" variant="primary">가입하기</ds-button>
+          </div>
+          <div class="flex flex-row items-center gap-2">
+            <input type="checkbox" id="terms" class="size-4 rounded border-input" />
+            <ds-label for="terms">이용약관에 동의합니다</ds-label>
+          </div>
+          <ds-button type="submit">가입</ds-button>
         </form>
       </section>
 
-      <!-- ========================================================= -->
-      <!-- 2. Token 오버라이드 (브랜드 컬러)                            -->
-      <!-- ========================================================= -->
-      <section>
-        <h2>2. Token 오버라이드 (브랜드 컬러)</h2>
-        <p style="color: var(--dx-color-muted-foreground); margin: 0;">
-          같은 컴포넌트를 3개의 다른 브랜드로 렌더. wrapper 의 CSS 변수만 재선언.
+      <!-- 2. Token 오버라이드 -->
+      <section class="flex flex-col gap-4 p-6 rounded-xl border">
+        <h2 class="text-xl font-semibold">2. Token 오버라이드</h2>
+        <p class="text-sm text-muted-foreground">
+          wrapper 의 CSS 변수(<code>--primary</code>)만 재선언하면 하위 ds-* 컴포넌트
+          전체가 새 색을 따라감.
         </p>
-
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <!-- 기본 -->
-          <div class="theme-card">
-            <ds-badge variant="primary">기본 (DX)</ds-badge>
-            <ds-form-field>
-              <ds-label html-for="email-default" required>이메일</ds-label>
-              <ds-input id="email-default" type="email"></ds-input>
-            </ds-form-field>
-            <ds-button variant="primary">가입</ds-button>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="flex flex-col gap-3 p-4 rounded-lg border">
+            <ds-badge>기본</ds-badge>
+            <ds-button>가입</ds-button>
           </div>
-
-          <!-- Purple -->
-          <div class="theme-card brand-purple">
-            <ds-badge variant="primary">Purple</ds-badge>
-            <ds-form-field>
-              <ds-label html-for="email-purple" required>이메일</ds-label>
-              <ds-input id="email-purple" type="email"></ds-input>
-            </ds-form-field>
-            <ds-button variant="primary">가입</ds-button>
+          <div class="flex flex-col gap-3 p-4 rounded-lg border"
+               style="--primary:#8b5cf6; --ring:#8b5cf6;">
+            <ds-badge>Purple</ds-badge>
+            <ds-button>가입</ds-button>
           </div>
-
-          <!-- Emerald -->
-          <div class="theme-card brand-emerald">
-            <ds-badge variant="primary">Emerald</ds-badge>
-            <ds-form-field>
-              <ds-label html-for="email-emerald" required>이메일</ds-label>
-              <ds-input id="email-emerald" type="email"></ds-input>
-            </ds-form-field>
-            <ds-button variant="primary">가입</ds-button>
+          <div class="flex flex-col gap-3 p-4 rounded-lg border"
+               style="--primary:#10b981; --ring:#10b981;">
+            <ds-badge>Emerald</ds-badge>
+            <ds-button>가입</ds-button>
           </div>
         </div>
       </section>
 
-      <!-- ========================================================= -->
-      <!-- 3. Tailwind classname 오버라이드                             -->
-      <!-- ========================================================= -->
-      <section>
-        <h2>3. Tailwind 오버라이드</h2>
-        <p style="color: var(--dx-color-muted-foreground); margin: 0;">
-          ds-* 호스트에 class 로 호스트 레벨 속성(width/margin/shadow) 오버라이드.
+      <!-- 3. Tailwind 오버라이드 -->
+      <section class="flex flex-col gap-4 p-6 rounded-xl border">
+        <h2 class="text-xl font-semibold">3. Tailwind className 오버라이드</h2>
+        <p class="text-sm text-muted-foreground">
+          Light DOM WC 라서 <code>class</code> 가 실제 내부 요소에 tailwind-merge 로 병합.
         </p>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <ds-button variant="primary">기본</ds-button>
-          <ds-button variant="primary" class="w-full">w-full</ds-button>
-          <ds-button variant="primary" class="w-full mt-2 shadow-lg">w-full mt-2 shadow-lg</ds-button>
-          <ds-button variant="primary" class="w-auto ml-auto">w-auto ml-auto</ds-button>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <ds-button>default</ds-button>
+          <ds-button variant="secondary">secondary</ds-button>
+          <ds-button variant="tertiary">tertiary</ds-button>
+          <ds-button variant="destructive">destructive</ds-button>
+          <ds-button class="w-full mt-2 shadow-lg rounded-full">rounded-full + shadow-lg</ds-button>
+          <ds-button variant="outline" class="bg-yellow-100 hover:bg-yellow-200">outline + bg</ds-button>
         </div>
-
-        <div class="flex gap-2 flex-wrap">
-          <ds-badge variant="primary" class="text-base">큰 뱃지</ds-badge>
-          <ds-badge variant="success" class="px-4 py-1">넓은 패딩</ds-badge>
+        <div class="flex gap-2 flex-wrap items-center">
+          <ds-badge>default</ds-badge>
+          <ds-badge variant="secondary">secondary</ds-badge>
+          <ds-badge variant="tertiary">tertiary</ds-badge>
+          <ds-badge class="text-base px-6 py-2">text-base px-6 py-2</ds-badge>
         </div>
+        <ds-input type="email" placeholder="border-2 border-primary" class="border-2 border-primary"></ds-input>
+      </section>
 
-        <ds-input type="email" placeholder="w-full 로 폭 조정" class="w-full"></ds-input>
-
-        <!-- 조건부 class: vanilla JS 로 toggle (React cn() 대응) -->
-        <ds-button id="conditional-btn" variant="primary" class="w-full">
-          클릭하면 rounded-full 토글
-        </ds-button>
+      <!-- 4. Dialog (Alpine.js 통합) -->
+      <section class="flex flex-col gap-4 p-6 rounded-xl border"
+               x-data="{ open: false }">
+        <h2 class="text-xl font-semibold">4. Dialog (Alpine.js)</h2>
+        <p class="text-sm text-muted-foreground">
+          native <code>&lt;dialog&gt;</code> + Alpine.js <code>x-show</code>. ESC / backdrop 모두 닫힘.
+        </p>
+        <ds-button @click="open = true">약관 보기</ds-button>
+        <ds-dialog x-show="open" @dialog-close="open = false" class="flex flex-col gap-3">
+          <h3 class="text-lg font-semibold">이용약관</h3>
+          <p class="text-sm">본문 내용...</p>
+          <ds-button variant="outline" @click="open = false">닫기</ds-button>
+        </ds-dialog>
       </section>
     </main>
-
-    <script type="module">
-      // 다크모드 토글
-      const toggle = document.getElementById('theme-toggle');
-      toggle.addEventListener('ds-change', (e) => {
-        document.documentElement.classList.toggle('dark', e.target.checked);
-      });
-
-      // 폼 제출
-      document.getElementById('signup').addEventListener('submit', (e) => {
-        e.preventDefault();
-        const email = document.getElementById('email').value;
-        alert(`가입 요청: ${email}`);
-      });
-
-      // 조건부 Tailwind class
-      document.getElementById('conditional-btn').addEventListener('click', (e) => {
-        e.currentTarget.classList.toggle('rounded-full');
-      });
-    </script>
   </body>
 </html>

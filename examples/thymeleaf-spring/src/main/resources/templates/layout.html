@@ -5,50 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title th:text="${pageTitle} ?: 'DX Design System'">DX Design System</title>
 
-    <!--
-      배포 환경에 따라 둘 중 하나를 선택:
-      1) 사내 static 서빙: /css/styles.css · /js/dx-core.bundle.js
-      2) CDN: https://cdn.jsdelivr.net/npm/@dx/styles@1/... (버전 고정 권장)
-    -->
-    <link rel="stylesheet" th:href="@{/css/styles.css}" />
-    <script type="module" th:src="@{/js/dx-core.bundle.js}"></script>
+    <!-- @dx/styles 로드. 사내 Tailwind 빌드가 있으면 자기 빌드물로 교체, 없으면 styles-utilities.css -->
+    <link rel="stylesheet" th:href="@{/css/styles-utilities.css}" />
 
-    <!--
-      (선택) Tailwind 유틸 클래스를 소비자 마크업에 쓰려면 별도 빌드해서 로드.
-      @dx/styles 는 DS 내부 스타일만 포함하므로 `md:grid-cols-12` 같은 유틸은 자체 빌드 필요.
-      빌드 설정은 README "Spring Boot 에서 Tailwind 빌드" 섹션 참고.
-    -->
-    <link rel="stylesheet" th:href="@{/css/tailwind.css}" />
+    <!-- Alpine.js (Dialog 등 인터랙션 필요 시) -->
+    <script defer src="https://unpkg.com/alpinejs@3"></script>
 
-    <style>
-      body {
-        font-family: var(--dx-font-sans);
-        color: var(--dx-color-foreground);
-        background: var(--dx-color-background);
-        margin: 0;
-        padding: 48px 24px;
-      }
-      main {
-        max-width: var(--dx-container-md);
-        margin: 0 auto;
-        display: flex;
-        flex-direction: column;
-        gap: 32px;
-      }
-    </style>
+    <!-- @dx/elements Light DOM Web Components -->
+    <script type="module" defer th:src="@{/js/dx-elements.mjs}"></script>
   </head>
 
-  <body>
-    <main>
+  <body class="bg-background text-foreground p-10">
+    <main class="max-w-2xl mx-auto flex flex-col gap-8">
       <header>
-        <h1 style="font-size: var(--dx-font-size-h1); margin: 0;">DX Design System</h1>
-        <p style="color: var(--dx-color-muted-foreground); margin-top: 8px;">
-          Thymeleaf + Spring Boot 최소 예제
-        </p>
+        <h1 class="text-3xl font-bold">DX Design System</h1>
+        <p class="text-muted-foreground mt-2">Thymeleaf + Spring Boot 예제</p>
       </header>
 
       <div th:replace="${contentFragment}">
-        <!-- 각 페이지의 fragment 가 여기에 삽입됨 -->
+        <!-- 각 페이지 fragment 가 삽입됨 -->
       </div>
     </main>
   </body>
