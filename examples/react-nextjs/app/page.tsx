@@ -79,8 +79,10 @@ export default function Page() {
           그대로 적용. padding·rounded·bg 모두 바로 먹음.
         </p>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-          <Button>기본</Button>
-          <Button className="w-full">w-full</Button>
+          <Button>default</Button>
+          <Button variant="secondary">secondary</Button>
+          <Button variant="tertiary">tertiary</Button>
+          <Button variant="destructive">destructive</Button>
           <Button className="w-full mt-2 shadow-lg rounded-full">rounded-full shadow-lg</Button>
           <Button variant="outline" className="bg-yellow-100 hover:bg-yellow-200">
             bg 완전 override
@@ -88,7 +90,9 @@ export default function Page() {
         </div>
 
         <div className="flex gap-2 flex-wrap items-center">
-          <Badge>기본</Badge>
+          <Badge>default</Badge>
+          <Badge variant="secondary">secondary</Badge>
+          <Badge variant="tertiary">tertiary</Badge>
           <Badge className="text-base px-6 py-2">text-base px-6 py-2</Badge>
           <Badge variant="outline" className="rounded-full">rounded-full</Badge>
         </div>
