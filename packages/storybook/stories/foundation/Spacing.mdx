@@ -1,0 +1,25 @@
+import { Meta } from '@storybook/blocks';
+
+<Meta title="Foundation/Spacing" />
+
+# Spacing
+
+Tailwind 기본 스케일 사용 — `m-*` / `p-*` / `gap-*` 전부 Tailwind 유틸로 제어한다. 별도 `--spacing-*` 토큰을 제공하지 않는다.
+
+## 샘플
+
+<div className="flex flex-col gap-4">
+  {[1, 2, 3, 4, 6, 8, 12, 16].map((n) => (
+    <div key={n} className="flex items-center gap-3">
+      <code className="w-12 text-sm">p-{n}</code>
+      <div className="bg-muted">
+        <div className={`bg-primary text-primary-foreground text-xs p-${n}`}>p-{n} ({n * 4}px)</div>
+      </div>
+    </div>
+  ))}
+</div>
+
+## 규칙
+
+- 컴포넌트 내부 여백은 토큰화하지 않는다 (shadcn 관례).
+- 레이아웃 간격은 사용처에서 `gap-*` / `space-y-*` 로 조절.

@@ -1,0 +1,27 @@
+import { Meta, Canvas, Source } from '@storybook/blocks';
+import * as LabelStories from './label.stories';
+
+<Meta of={LabelStories} />
+
+# Label
+
+<Canvas of={LabelStories.WithInput} />
+
+## 각 프레임워크 사용법
+
+### React (`@dx/ui`)
+
+<Source code={`import { Label, Input } from '@dx/ui';
+
+<Label htmlFor="email">이메일</Label>
+<Input id="email" type="email" />`} language="tsx" />
+
+### Thymeleaf (`@dx/elements`)
+
+<Source code={`<ds-label for="email" th:text="#{form.email}">이메일</ds-label>
+<ds-input id="email" type="email" th:field="*{email}" />`} language="html" />
+
+### 순수 HTML (`@dx/elements`)
+
+<Source code={`<ds-label for="email">이메일</ds-label>
+<ds-input id="email" type="email"></ds-input>`} language="html" />

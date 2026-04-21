@@ -1,0 +1,20 @@
+import { Meta } from '@storybook/blocks';
+
+<Meta title="Foundation/Radius" />
+
+# Radius
+
+모든 radius 토큰은 `--radius` 변수 기준. 테마에서 `--radius` 하나만 바꾸면 `sm` / `md` / `lg` / `xl` 이 비례해서 움직인다.
+
+<div className="flex flex-wrap gap-4">
+  {['rounded-sm','rounded-md','rounded-lg','rounded-xl','rounded-full'].map((r) => (
+    <div key={r} className="flex flex-col items-center gap-2">
+      <div className={`h-16 w-16 bg-primary ${r}`} />
+      <code className="text-xs">{r}</code>
+    </div>
+  ))}
+</div>
+
+## 사용
+
+React / Thymeleaf / HTML: `class="rounded-md"`.

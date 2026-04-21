@@ -1,0 +1,31 @@
+import { Meta, Canvas, Controls, Source } from '@storybook/blocks';
+import * as BadgeStories from './badge.stories';
+
+<Meta of={BadgeStories} />
+
+# Badge
+
+<Canvas of={BadgeStories.Default} />
+
+<Controls />
+
+## 각 프레임워크 사용법
+
+### React (`@dx/ui`)
+
+<Source code={`import { Badge } from '@dx/ui';
+
+<Badge>New</Badge>
+<Badge variant="secondary">Beta</Badge>
+<Badge variant="destructive">Error</Badge>`} language="tsx" />
+
+### Thymeleaf (`@dx/elements`)
+
+<Source code={`<ds-badge th:text="#{status.new}">New</ds-badge>
+<ds-badge variant="destructive" th:text="#{status.error}">Error</ds-badge>`} language="html" />
+
+### 순수 HTML (`@dx/elements`)
+
+<Source code={`<ds-badge>New</ds-badge>
+<ds-badge variant="secondary">Beta</ds-badge>
+<ds-badge variant="destructive">Error</ds-badge>`} language="html" />

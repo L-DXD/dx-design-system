@@ -1,0 +1,32 @@
+import { Meta } from '@storybook/blocks';
+
+<Meta title="Foundation/Typography" />
+
+# Typography
+
+Tailwind v4 기본 타이포 스케일을 그대로 사용한다.
+
+## 사이즈
+
+<div className="flex flex-col gap-3">
+  <p className="text-xs">text-xs — 12px (메타, 캡션)</p>
+  <p className="text-sm">text-sm — 14px (본문 보조, helper)</p>
+  <p className="text-base">text-base — 16px (본문 기본)</p>
+  <p className="text-lg">text-lg — 18px (강조 본문)</p>
+  <p className="text-xl">text-xl — 20px (섹션 타이틀)</p>
+  <p className="text-2xl">text-2xl — 24px (페이지 서브타이틀)</p>
+  <p className="text-3xl">text-3xl — 30px (페이지 타이틀)</p>
+</div>
+
+## 웨이트
+
+<div className="flex flex-col gap-3">
+  <p className="text-base font-normal">font-normal — 400</p>
+  <p className="text-base font-medium">font-medium — 500</p>
+  <p className="text-base font-semibold">font-semibold — 600</p>
+  <p className="text-base font-bold">font-bold — 700</p>
+</div>
+
+## 사용
+
+React / Thymeleaf / HTML 모두 동일: `class="text-lg font-semibold"`.

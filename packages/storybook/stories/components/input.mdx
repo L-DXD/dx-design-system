@@ -1,0 +1,26 @@
+import { Meta, Canvas, Controls, Source } from '@storybook/blocks';
+import * as InputStories from './input.stories';
+
+<Meta of={InputStories} />
+
+# Input
+
+<Canvas of={InputStories.Default} />
+
+<Controls />
+
+## 각 프레임워크 사용법
+
+### React (`@dx/ui`)
+
+<Source code={`import { Input } from '@dx/ui';
+
+<Input placeholder="이메일" type="email" />`} language="tsx" />
+
+### Thymeleaf (`@dx/elements`)
+
+<Source code={`<ds-input type="email" th:field="*{email}" placeholder="이메일" />`} language="html" />
+
+### 순수 HTML (`@dx/elements`)
+
+<Source code={`<ds-input type="email" name="email" placeholder="이메일"></ds-input>`} language="html" />

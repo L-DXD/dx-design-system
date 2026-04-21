@@ -1,0 +1,18 @@
+import { Meta } from '@storybook/blocks';
+import { ColorSwatches } from './_colors';
+
+<Meta title="Foundation/Colors" />
+
+# Colors
+
+shadcn 표준 semantic 토큰 + 3 브랜드 (primary / secondary / tertiary).
+
+<ColorSwatches />
+
+## 사용
+
+React: `className="bg-primary text-primary-foreground"`
+
+Thymeleaf/HTML: `class="bg-primary text-primary-foreground"`
+
+브랜드 오버라이드는 wrapper 에 `style="--primary: #8b5cf6"` 인라인 또는 별도 theme.css 의 `:root` 재선언.

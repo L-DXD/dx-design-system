@@ -1,0 +1,31 @@
+import { Meta, Canvas, Controls, Source } from '@storybook/blocks';
+import * as ButtonStories from './button.stories';
+
+<Meta of={ButtonStories} />
+
+# Button
+
+<Canvas of={ButtonStories.Default} />
+
+<Controls />
+
+## 각 프레임워크 사용법
+
+### React (`@dx/ui`)
+
+<Source code={`import { Button } from '@dx/ui';
+
+<Button>가입</Button>
+<Button variant="secondary">보조</Button>
+<Button variant="tertiary" className="w-full">3차 + w-full</Button>`} language="tsx" />
+
+### Thymeleaf (`@dx/elements`)
+
+<Source code={`<ds-button th:text="#{form.submit}">가입</ds-button>
+<ds-button variant="secondary" th:text="#{form.secondary}">보조</ds-button>`} language="html" />
+
+### 순수 HTML (`@dx/elements`)
+
+<Source code={`<ds-button>가입</ds-button>
+<ds-button variant="secondary">보조</ds-button>
+<ds-button variant="tertiary" class="w-full">3차 + w-full</ds-button>`} language="html" />

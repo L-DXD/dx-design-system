@@ -1,42 +1,19 @@
 import '@dx/styles';
-import '@dx/core';
-
-import type { Preview } from '@storybook/web-components';
+import type { Preview } from '@storybook/react-vite';
 import axeKoLocale from 'axe-core/locales/ko.json';
 
 const preview: Preview = {
   parameters: {
-    controls: {
-      matchers: {
-        color: /(background|color)$/i,
-        date: /Date$/i,
-      },
-    },
-    backgrounds: { disable: true },
+    a11y: { config: { locale: axeKoLocale } },
     options: {
       storySort: {
-        order: [
-          'Introduction',
-          'Foundation',
-          'Atoms',
-          'Molecules',
-          'Organisms',
-          'Templates',
-          'Pages',
-        ],
-      },
-    },
-    a11y: {
-      // axe-core 한국어 로케일 적용. 규칙 이름/설명/권장사항이 한국어로 표시됨.
-      config: {
-        locale: axeKoLocale,
+        order: ['Introduction', 'Foundation', 'Components'],
       },
     },
   },
   globalTypes: {
     theme: {
       name: 'Theme',
-      description: '라이트/다크 모드 전환',
       defaultValue: 'light',
       toolbar: {
         icon: 'paintbrush',
@@ -51,13 +28,7 @@ const preview: Preview = {
   decorators: [
     (story, context) => {
       const theme = context.globals.theme ?? 'light';
-      const root = document.documentElement;
-      root.classList.toggle('dark', theme === 'dark');
-      root.classList.toggle('light', theme === 'light');
-
-      document.body.style.background = 'var(--dx-color-background)';
-      document.body.style.color = 'var(--dx-color-foreground)';
-
+      document.documentElement.classList.toggle('dark', theme === 'dark');
       return story();
     },
   ],

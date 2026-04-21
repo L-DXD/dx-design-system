@@ -1,0 +1,27 @@
+import { Meta, Canvas, Source } from '@storybook/blocks';
+import * as CheckboxStories from './checkbox.stories';
+
+<Meta of={CheckboxStories} />
+
+# Checkbox
+
+<Canvas of={CheckboxStories.WithLabel} />
+
+## 각 프레임워크 사용법
+
+### React (`@dx/ui`)
+
+<Source code={`import { Checkbox, Label } from '@dx/ui';
+
+<Checkbox id="terms" />
+<Label htmlFor="terms">동의합니다</Label>`} language="tsx" />
+
+### Thymeleaf (`@dx/elements`)
+
+<Source code={`<ds-checkbox id="terms" th:field="*{agreed}" />
+<ds-label for="terms" th:text="#{form.agree}">동의합니다</ds-label>`} language="html" />
+
+### 순수 HTML (`@dx/elements`)
+
+<Source code={`<ds-checkbox id="terms" name="agreed"></ds-checkbox>
+<ds-label for="terms">동의합니다</ds-label>`} language="html" />

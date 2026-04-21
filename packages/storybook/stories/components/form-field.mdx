@@ -1,0 +1,59 @@
+import { Meta, Canvas, Source } from '@storybook/blocks';
+import * as FormFieldStories from './form-field.stories';
+
+<Meta of={FormFieldStories} />
+
+# FormField
+
+Compound 컨테이너. `Label` / `Input` / `HelperText` / `ErrorMessage` 를 자식으로 조립해 레이아웃과 스타일만 담당한다.
+
+<Canvas of={FormFieldStories.Basic} />
+
+<Canvas of={FormFieldStories.Horizontal} />
+
+<Canvas of={FormFieldStories.WithError} />
+
+## 각 프레임워크 사용법
+
+### React (`@dx/ui`)
+
+<Source code={`import { FormField, Label, Input, HelperText, ErrorMessage } from '@dx/ui';
+
+<FormField>
+  <Label htmlFor="email">이메일</Label>
+  <Input id="email" type="email" />
+  <HelperText>회사 이메일을 입력하세요</HelperText>
+</FormField>
+
+<FormField>
+  <Label htmlFor="e2">이메일</Label>
+  <Input id="e2" defaultValue="invalid" />
+  <ErrorMessage>유효하지 않은 이메일입니다</ErrorMessage>
+</FormField>`} language="tsx" />
+
+### Thymeleaf (`@dx/elements`)
+
+<Source code={`<ds-form-field>
+  <ds-label for="email" th:text="#{form.email}">이메일</ds-label>
+  <ds-input id="email" type="email" th:field="*{email}" />
+  <ds-helper-text th:text="#{form.email.help}">회사 이메일을 입력하세요</ds-helper-text>
+</ds-form-field>
+
+<ds-form-field th:if="\${#fields.hasErrors('email')}">
+  <ds-label for="email2" th:text="#{form.email}">이메일</ds-label>
+  <ds-input id="email2" th:field="*{email}" />
+  <ds-error-message th:errors="*{email}">유효하지 않은 이메일</ds-error-message>
+</ds-form-field>`} language="html" />
+
+### 순수 HTML (`@dx/elements`)
+
+<Source code={`<ds-form-field>
+  <ds-label for="email">이메일</ds-label>
+  <ds-input id="email" type="email"></ds-input>
+  <ds-helper-text>회사 이메일을 입력하세요</ds-helper-text>
+</ds-form-field>
+
+<ds-form-field orientation="horizontal">
+  <ds-checkbox id="terms"></ds-checkbox>
+  <ds-label for="terms">이용약관에 동의합니다</ds-label>
+</ds-form-field>`} language="html" />
