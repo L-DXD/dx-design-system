@@ -1,0 +1,28 @@
+{
+  "name": "@dx/elements",
+  "version": "0.2.0",
+  "description": "DX Design System — Light DOM Web Components for HTML/Thymeleaf",
+  "type": "module",
+  "main": "dist/dx-elements.mjs",
+  "module": "dist/dx-elements.mjs",
+  "types": "dist/dx-elements.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/dx-elements.d.ts",
+      "import": "./dist/dx-elements.mjs"
+    }
+  },
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch"
+  },
+  "dependencies": {
+    "@dx/ui": "workspace:*",
+    "tailwind-merge": "^3"
+  },
+  "devDependencies": {
+    "tsup": "^8",
+    "typescript": "^5"
+  }
+}

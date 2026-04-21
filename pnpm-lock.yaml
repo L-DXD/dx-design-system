@@ -58,6 +58,22 @@ importers:
         specifier: ^5
         version: 5.9.3
 
+  packages/elements:
+    dependencies:
+      '@dx/ui':
+        specifier: workspace:*
+        version: link:../ui
+      tailwind-merge:
+        specifier: ^3
+        version: 3.5.0
+    devDependencies:
+      tsup:
+        specifier: ^8
+        version: 8.5.1(jiti@2.6.1)(postcss@8.5.10)(typescript@5.9.3)(yaml@2.8.3)
+      typescript:
+        specifier: ^5
+        version: 5.9.3
+
   packages/storybook:
     dependencies:
       '@dx/styles':
